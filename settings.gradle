@@ -1,4 +1,4 @@
-rootProject.name = 'proteus-quickstart'
+rootProject.name = 'springone-demo'
 include 'client'
 include 'service'
 include 'service-idl'

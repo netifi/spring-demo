@@ -17,7 +17,10 @@ dependencyManagement {
 dependencies {
     compile project(':service-idl')
 
-    compile "com.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
+    compile "io.netifi.proteus:client:$proteusVersion"
+    compile("com.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion") {
+        exclude group: 'io.netifi.proteus', module: 'client'
+    }
 }
 
 configurations.all {

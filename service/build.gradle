@@ -1,27 +1,3 @@
-/*
-plugins {
-    id 'java'
-    id 'application'
-}
-
-sourceCompatibility = 1.8
-
-dependencies {
-    compile project(':service-idl')
-
-    compile "io.netifi.proteus:client:$proteusVersion"
-    compile "com.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
-    compile 'com.google.protobuf:protobuf-java:3.5.0'
-
-    compile 'org.apache.logging.log4j:log4j-api:2.8.2'
-    compile 'org.apache.logging.log4j:log4j-core:2.8.2'
-    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.8.2'
-}
-
-mainClassName = 'io.netifi.proteus.quickstart.service.Main'
-
-*/
-
 plugins {
     id 'java'
     id 'application'
@@ -41,7 +17,10 @@ dependencyManagement {
 dependencies {
     compile project(':service-idl')
 
-    compile "com.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
+    compile "io.netifi.proteus:client:$proteusVersion"
+    compile("com.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion") {
+        exclude group: 'io.netifi.proteus', module: 'client'
+    }
 }
 
 configurations.all {

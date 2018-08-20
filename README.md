@@ -1,4 +1,4 @@
-# proteus-spring-quickstart
+# springone-demo
 This project provides a scaffolding for getting up and running quickly with [Netifi Proteus](http://www.netifi.com/proteus.html) on [Spring Boot](https://spring.io/projects/spring-boot)
 
 The project comes with a simple client and service. The client sends the word `World` to the service and the service responds with the message `Hello, World! from {service name}`.
