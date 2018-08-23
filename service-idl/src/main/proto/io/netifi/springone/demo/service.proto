@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package io.netifi.springone.demo;
+
+option java_package = "io.netifi.springone.demo";
+option java_outer_classname = "ServiceProto";
+option java_multiple_files = true;
+
+service RecordsService {
+    rpc records (RecordsRequest) returns (stream Record) {}
+}
+
+service TournamentService {
+    rpc tournament (RecordsRequest) returns (stream RoundResult) {}
+}
+
+service RankingService {
+    rpc rank (RankingRequest) returns (RankingResponse) {}
+}
+
+message RecordsRequest {
+    int32 offset = 1;
+    int32 maxResults = 2;
+}
+
+message RoundResult {
+    int32 round = 1;
+    Record winner = 2;
+}
+
+message RankingRequest {
+    repeated Record records = 1;
+}
+
+message RankingResponse {
+    int32 id = 1;
+}
+
+message Record {
+    int32 id = 1;
+    Data data = 2;
+}
+
+message Data {
+    repeated string aliases = 1;
+    repeated string authors = 2;
+    string description = 3;
+    Images images = 4;
+    Color mainColor = 5;
+    string name = 6;
+    repeated string partners = 7;
+    repeated string powers = 8;
+    Ranking ranking = 9;
+    repeated string secretIdentities = 10;
+    repeated string species = 11;
+    string superName = 12;
+    repeated string teams = 13;
+    Urls urls = 14;
+}
+
+message Images {
+    string background = 1;
+    string thumbnail = 2;
+}
+
+message Color {
+    int32 red = 1;
+    int32 green = 2;
+    int32 blue = 3;
+    string hexa = 4;
+}
+
+message Ranking {
+    int32 comicCount = 1;
+    int32 eventCount = 2;
+    int32 pageviewCount = 3;
+    int32 serieCount = 4;
+    int32 storyCount = 5;
+}
+
+message Urls {
+    string marvel = 1;
+    string wikipedia = 2;
+}

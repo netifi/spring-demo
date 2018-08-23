@@ -72,6 +72,7 @@ Temporary Items
 **/build/
 /out/**
 **/out/
+generated/
 
 .gradle/**
 

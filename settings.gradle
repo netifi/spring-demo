@@ -1,5 +1,6 @@
 rootProject.name = 'springone-demo'
 include 'client'
-include 'service'
+include 'records'
+include 'tournament'
+include 'ranking'
 include 'service-idl'
-

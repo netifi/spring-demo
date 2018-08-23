@@ -5,7 +5,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.5.RELEASE'
 }
 
-mainClassName = 'io.netifi.springone.demo.client.Main'
+mainClassName = 'io.netifi.springone.demo.TournamentServiceApplication'
 sourceCompatibility = 1.8
 
 dependencyManagement {
@@ -21,8 +21,6 @@ dependencies {
     compile("com.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion") {
         exclude group: 'io.netifi.proteus', module: 'client'
     }
-
-    compile "com.google.protobuf:protobuf-java-util:$protobufVersion"
 }
 
 configurations.all {

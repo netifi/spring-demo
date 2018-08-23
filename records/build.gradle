@@ -5,7 +5,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.5.RELEASE'
 }
 
-mainClassName = 'io.netifi.springone.demo.client.Main'
+mainClassName = 'io.netifi.springone.demo.RecordsServiceApplication'
 sourceCompatibility = 1.8
 
 dependencyManagement {
@@ -23,6 +23,9 @@ dependencies {
     }
 
     compile "com.google.protobuf:protobuf-java-util:$protobufVersion"
+    compile 'io.projectreactor.addons:reactor-adapter:3.1.6.RELEASE'
+    compile 'com.github.davidmoten:rxjava2-jdbc:0.1-RC38'
+    compile 'org.postgresql:postgresql:42.2.4'
 }
 
 configurations.all {
