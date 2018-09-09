@@ -23,7 +23,7 @@ public class DefaultRecordsService implements RecordsService {
     this.db = Database
         .nonBlocking()
         // the jdbc url of the connections to be placed in the pool
-        .url("jdbc:postgresql:rdegnan")
+        .url("jdbc:postgresql:marvel")
         // an unused connection will be closed after thirty minutes
         .maxIdleTime(30, TimeUnit.MINUTES)
         // connections are checked for healthiness on checkout if the connection

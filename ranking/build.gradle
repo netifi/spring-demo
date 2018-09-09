@@ -1,8 +1,8 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.springframework.boot' version '2.0.2.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.5.RELEASE'
+    id 'org.springframework.boot' version '2.0.4.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.6.RELEASE'
 }
 
 mainClassName = 'io.netifi.springone.demo.RankingServiceApplication'
@@ -17,10 +17,8 @@ dependencyManagement {
 dependencies {
     compile project(':service-idl')
 
-    compile "io.netifi.proteus:client:$proteusVersion"
-    compile("com.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion") {
-        exclude group: 'io.netifi.proteus', module: 'client'
-    }
+    compile "io.netifi.proteus:proteus-client:$proteusVersion"
+    compile "io.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
 }
 
 configurations.all {

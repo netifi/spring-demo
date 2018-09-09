@@ -1,8 +1,8 @@
 package io.netifi.springone.demo;
 
 import com.google.common.math.IntMath;
-import io.netifi.proteus.annotations.ProteusClient;
 import io.netty.buffer.ByteBuf;
+import io.rsocket.rpc.annotations.Client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
@@ -16,10 +16,10 @@ public class DefaultTournamentService implements TournamentService {
   private static int WINDOW_SIZE = 2;
   private static int CONCURRENCY = 4;
 
-  @ProteusClient(group = "springone.demo.records")
+  @Client(group = "springone.demo.records")
   private RecordsServiceClient recordsService;
 
-  @ProteusClient(group = "springone.demo.ranking")
+  @Client(group = "springone.demo.ranking")
   private RankingServiceClient rankingService;
 
   @Override
