@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.springframework.boot' version '2.0.4.RELEASE'
+    id 'org.springframework.boot' version '2.0.2.RELEASE'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE'
 }
 
-mainClassName = 'io.netifi.springone.demo.client.ClientApplicatio'
+mainClassName = 'io.rsocket.springone.demo.client.ClientApplicatio'
 sourceCompatibility = 1.8
 
 dependencyManagement {

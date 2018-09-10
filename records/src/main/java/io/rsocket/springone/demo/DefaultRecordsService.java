@@ -1,4 +1,4 @@
-package io.netifi.springone.demo;
+package io.rsocket.springone.demo;
 
 import com.google.protobuf.util.JsonFormat;
 import io.netty.buffer.ByteBuf;

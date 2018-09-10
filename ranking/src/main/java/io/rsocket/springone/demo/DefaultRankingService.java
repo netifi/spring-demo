@@ -1,4 +1,4 @@
-package io.netifi.springone.demo;
+package io.rsocket.springone.demo;
 
 import io.netty.buffer.ByteBuf;
 import org.apache.logging.log4j.LogManager;

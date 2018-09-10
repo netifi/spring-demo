@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package io.netifi.springone.demo;
+package io.rsocket.springone.demo;
 
-option java_package = "io.netifi.springone.demo";
+option java_package = "io.rsocket.springone.demo";
 option java_outer_classname = "ServiceProto";
 option java_multiple_files = true;
 

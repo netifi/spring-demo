@@ -1,11 +1,12 @@
-package io.netifi.springone.demo;
+package io.rsocket.springone.demo.client;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TournamentServiceApplication {
+public class ClientApplication {
+
   public static void main(String... args) {
-    SpringApplication.run(TournamentServiceApplication.class, args);
+    SpringApplication.run(ClientApplication.class, args);
   }
 }

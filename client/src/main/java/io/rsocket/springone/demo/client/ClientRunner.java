@@ -1,17 +1,15 @@
-package io.netifi.springone.demo.client;
+package io.rsocket.springone.demo.client;
 
 import com.google.protobuf.util.JsonFormat;
-import io.netifi.springone.demo.RecordsRequest;
-import io.netifi.springone.demo.RoundResult;
-import io.netifi.springone.demo.TournamentServiceClient;
+import io.rsocket.springone.demo.RecordsRequest;
+import io.rsocket.springone.demo.RoundResult;
+import io.rsocket.springone.demo.TournamentServiceClient;
 import io.rsocket.rpc.annotations.Client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-
-import java.util.List;
 
 @Component
 public class ClientRunner implements CommandLineRunner {

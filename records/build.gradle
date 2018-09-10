@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'application'
-    id 'org.springframework.boot' version '2.0.4.RELEASE'
+    id 'org.springframework.boot' version '2.0.2.RELEASE'
     id 'io.spring.dependency-management' version '1.0.6.RELEASE'
 }
 
-mainClassName = 'io.netifi.springone.demo.RecordsServiceApplication'
+mainClassName = 'io.rsocket.springone.demo.RecordsServiceApplication'
 sourceCompatibility = 1.8
 
 dependencyManagement {
@@ -21,7 +21,7 @@ dependencies {
     compile "io.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
 
     compile "com.google.protobuf:protobuf-java-util:$protobufVersion"
-    compile 'io.projectreactor.addons:reactor-adapter:3.1.7.RELEASE'
+    compile 'io.projectreactor.addons:reactor-adapter:3.1.6.RELEASE'
     compile 'com.github.davidmoten:rxjava2-jdbc:0.1-RC38'
     compile 'org.postgresql:postgresql:42.2.4'
 }
