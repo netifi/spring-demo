@@ -1,0 +1,28 @@
+{
+  "name": "browser-ranking",
+  "version": "0.0.1",
+  "description": "A demo application of Proteus using RSocket from a Browser",
+  "main": "index.js",
+  "repository": "https://github.com/netifi/springone-demo",
+  "author": "Stephane Maldini <smaldini@pivotal.io>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "proteus-js-client": "0.1.3",
+    "rsocket-flowable": "^0.0.9",
+    "rsocket-types": "^0.0.9"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "rsocket-rpc-protobuf": "^0.1.0",
+    "babel-preset-env": "^1.7.0",
+    "http-server": "^0.11.1",
+    "webpack": "^3.2.0"
+  },
+  "scripts": {
+    "build": "webpack",
+    "start": "webpack && http-server ./src/main/resources/web/ -p 3000 -c-1",
+    "protoc": "protoc --proto_path=../service-idl/src/main/proto/io/rsocket/springone/demo --proto_path=node_modules/rsocket-rpc-protobuf/proto --js_out=import_style=commonjs,binary:src/main/js/proto --rsocket_rpc_out=src/main/js/proto --plugin=protoc-gen-rsocket_rpc=node_modules/.bin/rsocket_rpc_js_protoc_plugin ../service-idl/src/main/proto/io/rsocket/springone/demo/service.proto node_modules/rsocket-rpc-protobuf/proto/rsocket/*.proto"
+  }
+}

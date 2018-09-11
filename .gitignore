@@ -7,7 +7,7 @@
 
 # User-specific stuff:
 .idea/**
-.iml
+*.iml
 
 # CMake
 cmake-build-debug/
@@ -90,3 +90,10 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 # End of https://www.gitignore.io/api/java,linux,macos,gradle,android,intellij,androidstudio
+
+# NPM & JS
+node_modules/
+npm-debug.log
+package-lock.json
+*_pb.js
+yarn.lock
