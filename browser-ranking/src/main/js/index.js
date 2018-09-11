@@ -4,7 +4,6 @@ const {
 
 
 const {
-    Flowable,
     Single
 } = require('rsocket-flowable');
 
@@ -48,23 +47,29 @@ function main() {
 
     const handler = {
         rank: function(rankingRequest, metadata){
-            debugger;
-            console.log(rankingRequest)
-            console.log(metadata)
-            return Single.of(new RankingResponse({id: rankingRequest.records[0].id}));
+            rankingRequest.getRecordsList().forEach(record => {
+                console.log(record.getId() + "  " + record.getData().getSupername());
+            });
+            console.log("....");
+            let resp = new RankingResponse();
+            resp.setId(rankingRequest.getRecordsList()[0].getId());
+            return Single.of(resp);
         }
     };
 
     proteus.addService('io.rsocket.springone.demo.RankingService', new RankingServiceServer(handler));
 
-    setInterval(() => {
-        addMessage('CLIENT: pinging...', 'messages');
-        console.log(server)
-        console.log(proteus)
-
-
-    }, 5000);
-
+    proteus._connect().subscribe({
+        onComplete: function onComplete(connection) {
+            console.log("connected")
+        },
+        onError: function onError(err) {
+            console.log(err)
+        },
+        onSubscribe: function onSubscribe(cancel) {
+            /*not sure we would ever cancel*/
+        }
+    });
 
 }
 

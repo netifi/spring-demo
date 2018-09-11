@@ -95,5 +95,5 @@ gradle-app.setting
 node_modules/
 npm-debug.log
 package-lock.json
-*_pb.js
+#*_pb.js
 yarn.lock
