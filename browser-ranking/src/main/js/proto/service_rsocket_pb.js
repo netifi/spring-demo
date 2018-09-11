@@ -136,17 +136,20 @@ var RecordsServiceServer = function () {
       switch (method) {
         case 'records':
           return this.recordsMetrics(
-            this.recordsTrace(spanContext)(
-              this._service
-                .records(service_pb.RecordsRequest.deserializeBinary(!payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data)), payload.metadata)
+            this.recordsTrace(spanContext)(new rsocket_flowable.Flowable(subscriber => {
+              var binary = !payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data);
+              return this._service
+                .records(service_pb.RecordsRequest.deserializeBinary(binary), payload.metadata)
                 .map(function (message) {
                   return {
                     data: Buffer.from(message.serializeBinary()),
                     metadata: Buffer.alloc(0)
                   }
-                })
-              )
-            );
+                }).subscribe(subscriber);
+              }
+            )
+          )
+        );
         default:
           return rsocket_flowable.Flowable.error(new Error('unknown method'));
       }
@@ -226,17 +229,20 @@ var TournamentServiceServer = function () {
       switch (method) {
         case 'tournament':
           return this.tournamentMetrics(
-            this.tournamentTrace(spanContext)(
-              this._service
-                .tournament(service_pb.RecordsRequest.deserializeBinary(!payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data)), payload.metadata)
+            this.tournamentTrace(spanContext)(new rsocket_flowable.Flowable(subscriber => {
+              var binary = !payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data);
+              return this._service
+                .tournament(service_pb.RecordsRequest.deserializeBinary(binary), payload.metadata)
                 .map(function (message) {
                   return {
                     data: Buffer.from(message.serializeBinary()),
                     metadata: Buffer.alloc(0)
                   }
-                })
-              )
-            );
+                }).subscribe(subscriber);
+              }
+            )
+          )
+        );
         default:
           return rsocket_flowable.Flowable.error(new Error('unknown method'));
       }
@@ -313,17 +319,20 @@ var RankingServiceServer = function () {
       switch (method) {
         case 'rank':
           return this.rankMetrics(
-            this.rankTrace(spanContext)(
-              this._service
-              .rank(service_pb.RankingRequest.deserializeBinary(!payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data)), payload.metadata)
-              .map(function (message) {
-                return {
-                  data: Buffer.from(message.serializeBinary()),
-                  metadata: Buffer.alloc(0)
-                }
-              })
+            this.rankTrace(spanContext)(new rsocket_flowable.Single(subscriber => {
+              var binary = !payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data);
+              return this._service
+                .rank(service_pb.RankingRequest.deserializeBinary(binary), payload.metadata)
+                .map(function (message) {
+                  return {
+                    data: Buffer.from(message.serializeBinary()),
+                    metadata: Buffer.alloc(0)
+                  }
+                }).subscribe(subscriber);
+              }
             )
-          );
+          )
+        );
         default:
           return rsocket_flowable.Single.error(new Error('unknown method'));
       }
