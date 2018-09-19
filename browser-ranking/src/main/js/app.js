@@ -258,19 +258,20 @@ const Marvel = {
       inViewport(hit, {offset: 50}, onVisible);
     });
   },
-  rank(data) {
+  rank(rankingRequest) {
+    let data = rankingRequest.toObject().recordsList;
     Marvel.lazyloadCounter = 0;
     let hits = $('#hits .ais-hits');
     let hitTemplate = $('#hitTemplate').html();
     let emptyTemplate = $('#noResultsTemplate').html();
-    let compiledTemplate = _.template(hitTemplate);
+    let compiledTemplate = _.template(hitTemplate.trim());
 
     hits.empty();
     return new Single(subscriber => {
       subscriber.onSubscribe();
       _.forEach(data, (element) => {
-        let html = compiledTemplate(Marvel.transformItem(element));
-        let $html = $.parseHTML(html);
+        let html = compiledTemplate(Marvel.transformItem(element)).trim();
+        let $html = $($.parseHTML(html));
         $html.click(() => {
           let resp = new RankingResponse();
           resp.setId(element.id);
