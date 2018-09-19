@@ -1,0 +1,58 @@
+// All layout classes are prefixed with `l-`
+// Display follows a mobile-first approach. All classes are by default for
+// a display on small screens, and will be enhanced as more screen real-estate
+// appears.
+//
+// We prevent scrolling on the main page, and only activate it on the sidebar
+// and main panel. This makes the header act as if it was fixed.
+
+// Force the content to take all the vertical space, and prevent scrolling
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+// Fixed header on top
+.l-header {
+  height: $header-height;
+}
+
+// Main container
+// Takes all the available vertical space, and its children are flexbox elements
+.l-container {
+  height: calc(100vh - #{$header-height});
+  display: flex;
+  flex-flow: row wrap;
+}
+
+// Sidebar hidden by default
+.l-sidebar {
+  display: none;
+  overflow-y: auto;
+}
+
+// Search results
+.l-results {
+  flex: 1;
+  overflow-y: auto;
+}
+
+// Profile details
+.l-profile {
+  overflow-y: auto;
+  display: none;
+  // Display it only when activated (click on a hit)
+  .l-container__withProfile & {
+    display: block;
+    flex: 0 1 $profile-width;
+  }
+}
+
+// Room enough to display the sidebar
+@media (min-width: $breakpoint-sidebar) {
+  .l-sidebar {
+    display: block;
+    flex: 0 0 $sidebar-width;
+  }
+}

@@ -6,7 +6,7 @@ var rsocket_rpc_core = require('rsocket-rpc-core');
 var rsocket_rpc_tracing = require('rsocket-rpc-tracing');
 var rsocket_rpc_metrics = require('rsocket-rpc-metrics').Metrics;
 var rsocket_flowable = require('rsocket-flowable');
-var service_pb = require('./service_pb.js');
+var service_pb = require('./service_pb');
 
 var RecordsServiceClient = function () {
   function RecordsServiceClient(rs, tracer, meterRegistry) {

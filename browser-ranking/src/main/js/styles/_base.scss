@@ -1,0 +1,49 @@
+::root {
+  // Base font-size, refered to as `rem` after that
+  font-size: $base-font-size;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Helvetica, sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscaled;
+  -ms-overflow-style: none;
+}
+
+a {
+  color: #0063C3;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: none;
+    color: $red;
+  }
+  &:active {
+    text-decoration: none;
+  }
+  &:focus {
+    text-decoration: none;
+  }
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Title', Helvetica, sans-serif;
+}
+
+input {
+  appearance: none;
+}
+
+
+hr {
+  border: none;
+  margin: 1em auto;
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, #aaa 50%, rgba(255,255,255,0) 100%);
+}

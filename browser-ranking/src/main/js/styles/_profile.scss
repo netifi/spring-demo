@@ -1,0 +1,152 @@
+.l-profile {
+  background: #eff0f1;
+}
+
+.profile--header {
+  height: 200px;
+  position: relative;
+  border-bottom: 6px solid #000;
+}
+
+// Close button (cross)
+.profile--close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 35px;
+  height: 35px;
+  background: url(../img/svg-icons/icon-close.svg);
+  z-index: 10;
+}
+
+// Header image. Loads the default one as default, and the specific one if
+// possible afterwards
+.profile--background {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  // Default fallback image
+  background: {
+    image: url('../img/profile-bg-default.gif');
+    repeat: no-repeat;
+    position: top center;
+    size: cover;
+  }
+  // Specific image
+  &:before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: {
+      repeat: no-repeat;
+      position: top center;
+      size: cover;
+    }
+  }
+}
+
+// Hero name
+.profile--name {
+  position: absolute;
+  width: $profile-width - 30px;
+  left: 50%;
+  margin-left: -#{($profile-width - 30px)/ 2};
+  top: 20%;
+  text-align: center;
+  font-family: 'Title';
+  text-shadow: 1px 1px 1px lighten(#000, 50);
+  color: #FFF;
+  font-size: 3rem;
+}
+
+// Thumbnail
+$thumbnail-size: 120px;
+.profile--thumbnail {
+  position: absolute;
+  bottom: -$thumbnail-size / 3.5;
+  left:calc(50% - #{$thumbnail-size / 2});
+  height: $thumbnail-size;
+  width: $thumbnail-size;
+  border-radius: 50%;
+  border: 6px solid #000;
+  background: {
+    image: url(../img/hit-default.jpg);
+    repeat: no-repeat;
+    position: top center;
+    size: cover;
+  }
+}
+
+.profile--content {
+  padding: 2rem;
+}
+
+// Full description
+.profile--description {
+  color: lighten(#000, 20);
+  text-align: justify;
+  line-height: 1.3rem;
+  padding-bottom: 1rem;
+}
+
+// Links
+.profile--links {
+  display: flex;
+  flex-flow: row nowrap;
+  margin-bottom: 2rem;
+}
+.profile--link {
+  flex: 1;
+  text-align: center;
+}
+
+// Titles
+.profile--title {
+  font-size: 1.8rem;
+  color: $red;
+  margin: .7rem 0 .3rem 0;
+}
+
+// Facets
+.profile--facets {
+  display: flex;
+  flex-flow: row wrap;
+}
+.profile--facet {
+  flex: 1 1 50%;
+  padding: .2rem .5rem .2rem 0;
+  text-align: left;
+  position: relative;
+  cursor: pointer;
+  &:before {
+    display: none;
+    content: "+";
+    position: absolute;
+    left: -.7rem;
+  }
+  &:hover {
+    color: $red;
+    &:before {
+      display: block;
+    }
+  }
+}
+.profile--facet__isRefined {
+  font-weight: bold;
+  color: $red;
+  &:before {
+    content: "✓";
+    display: block;
+  }
+  &:hover {
+    text-decoration: line-through;
+    &:before {
+      text-decoration: line-through;
+    }
+  }
+}
