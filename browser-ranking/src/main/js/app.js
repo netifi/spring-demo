@@ -82,7 +82,8 @@ const Marvel = {
     return `${baseUrl}${stringOptions.join(',')}/${url}`;
   },
 
-  transformItem(data) {
+  transformItem(wrapper) {
+    const data = wrapper.data;
     // Main color
     let mainColorHexa = _.get(data, 'mainColor.hexa');
     let mainColorRgb = null;
@@ -190,7 +191,7 @@ const Marvel = {
     let isMatchingInNotDisplayedAttributes = !_.isEmpty(readableMatchingAttributes);
 
     let displayData = {
-      uuid: data.objectID,
+      uuid: wrapper.id,
       name: data.name,
       description: data.description,
       highlightedName: Marvel.getHighlightedValue(data, 'name'),
