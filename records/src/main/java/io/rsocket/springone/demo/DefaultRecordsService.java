@@ -8,13 +8,15 @@ import org.apache.logging.log4j.Logger;
 import org.davidmoten.rx.jdbc.Database;
 import org.davidmoten.rx.jdbc.pool.DatabaseType;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import reactor.adapter.rxjava.RxJava2Adapter;
 import reactor.core.publisher.Flux;
 import reactor.util.concurrent.Queues;
 
 import java.util.concurrent.TimeUnit;
 
-@Component
+@Service
 public class DefaultRecordsService implements RecordsService {
   private static final Logger logger = LogManager.getLogger(DefaultRecordsService.class);
   private final Database db;

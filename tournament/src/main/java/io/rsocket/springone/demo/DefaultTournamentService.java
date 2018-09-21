@@ -1,26 +1,27 @@
 package io.rsocket.springone.demo;
 
-import com.google.common.math.IntMath;
-import io.netty.buffer.ByteBuf;
-import io.rsocket.rpc.annotations.Client;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
-
 import java.math.RoundingMode;
 import java.util.function.Function;
 
-@Component
+import com.google.common.math.IntMath;
+import io.netifi.proteus.spring.core.annotation.Group;
+import io.netty.buffer.ByteBuf;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import reactor.core.publisher.Flux;
+
+import org.springframework.stereotype.Service;
+
+@Service
 public class DefaultTournamentService implements TournamentService {
   private static final Logger logger = LogManager.getLogger(DefaultTournamentService.class);
-  private static int WINDOW_SIZE = 2;
-  private static int CONCURRENCY = 4;
+  private static final int WINDOW_SIZE = 2;
+  private static final int CONCURRENCY = 4;
 
-  @Client(group = "springone.demo.records")
+  @Group("springone.demo.records")
   private RecordsServiceClient recordsService;
 
-  @Client(group = "springone.demo.ranking")
+  @Group("springone.demo.ranking")
   private RankingServiceClient rankingService;
 
   @Override
@@ -39,7 +40,7 @@ public class DefaultTournamentService implements TournamentService {
 
     return (round < maxRounds)
       ? Flux.just(result, Flux.defer(() -> tournament(winners, round + 1, maxRounds)))
-            .concatMap(Function.identity(), 1)
+            .flatMap(Function.identity(), 1, 1)
       : result;
   }
 

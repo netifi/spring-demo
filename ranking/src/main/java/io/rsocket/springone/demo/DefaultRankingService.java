@@ -10,8 +10,9 @@ import org.reactivestreams.Publisher;
 import reactor.core.publisher.Flux;
 
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class DefaultRankingService implements RankingService {
   private static final Logger logger = LogManager.getLogger(DefaultRankingService.class);
   private final Comparator<Record> comparator =
@@ -20,6 +21,7 @@ public class DefaultRankingService implements RankingService {
   @Override
   public Flux<Record> rank(Publisher<RankingRequest> requestStream, ByteBuf metadata) {
     return Flux.from(requestStream)
-               .map(request -> Collections.max(request.getRecordsList(), comparator));
+               .map(request -> Collections.max(request.getRecordsList(), comparator))
+               .log();
   }
 }
