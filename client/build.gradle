@@ -5,7 +5,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.6.RELEASE'
 }
 
-mainClassName = 'io.rsocket.springone.demo.client.ClientApplicatio'
+mainClassName = 'io.rsocket.springone.demo.client.ClientApplication'
 sourceCompatibility = 1.8
 
 dependencyManagement {
