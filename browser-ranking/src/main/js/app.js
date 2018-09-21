@@ -13,8 +13,9 @@ const Marvel = {
 
   init() {
 
+    $('#hits .ais-hits').empty();
     this.addMessage('ais-hits', "Waiting for Ranking Request...");
-    const url = "ws://localhost:8101/";
+    const url = "ws://springone.netifi.io:8101/";
     const proteus = Proteus.create({
       setup: {
           group: 'springone.demo.ranking',

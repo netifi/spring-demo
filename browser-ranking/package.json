@@ -8,17 +8,20 @@
   "license": "MIT",
   "private": false,
   "dependencies": {
-    "in-viewport": "^3.6.0",
     "babel-preset-es2015": "^6.24.1",
-    "sass-loader": "^7.0.3",
+    "connect": "^3.6.6",
+    "in-viewport": "^3.6.0",
+    "lodash": "^4.17.11",
+    "node-libs-browser": "^2.1.0",
     "node-sass": "^4.9.0",
+    "path": "^0.12.7",
     "proteus-js-client": "^0.1.4",
     "proteus-js-core": "^0.0.9",
     "proteus-js-frames": "^0.0.4",
     "rsocket-flowable": "^0.0.9",
     "rsocket-types": "^0.0.9",
-    "lodash": "^4.17.11",
-    "node-libs-browser": "^2.1.0"
+    "sass-loader": "^7.0.3",
+    "serve-static": "^1.13.2"
   },
   "devDependencies": {
     "sass-loader": "^7.0.3",
@@ -45,12 +48,12 @@
     "html-loader": "^0.5.5",
     "url-loader": "0.5.7",
     "webpack": "^3.2.0",
-    "webpack-dev-server": "^3.1.8",
+    "webpack-dev-server": "^2.0.0",
     "webpack-cli": "^3.1.0"
   },
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server",
+    "start": "webpack; node src/main/js/server.js",
     "protoc": "protoc --proto_path=../service-idl/src/main/proto/io/rsocket/springone/demo --proto_path=node_modules/rsocket-rpc-protobuf/app/proto --js_out=import_style=commonjs,binary:src/main/js/proto --rsocket_rpc_out=src/main/js/proto --plugin=protoc-gen-rsocket_rpc=node_modules/.bin/rsocket_rpc_js_protoc_plugin ../service-idl/src/main/proto/io/rsocket/springone/demo/service.proto node_modules/rsocket-rpc-protobuf/proto/rsocket/*.proto"
   }
 }
