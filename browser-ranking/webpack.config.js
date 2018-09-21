@@ -21,12 +21,32 @@ module.exports = {
     filename: '[chunkhash].js'
   },
   resolve: {
-    extensions: ['.js']
+    extensions: ['.js'],
+
   },
   module: {
-    loaders
-	},
-	devServer: {
+    loaders,
+    // rules: [
+    //     {
+    //       test: /\.css$/,
+    //       use: ['style-loader', 'css-loader']
+    //     },
+    //     {
+    //       test: /\.scss$/,
+    //       loader: ExtractTextPlugin.extract({fallback: 'style-loader', use : 'css-loader?sourceMap&localIdentName=[local]___[hash:base64:5]!sass-loader?outputStyle=expanded'}),
+    //       exclude: ['node_modules']
+    //     },
+    //     {
+    //       test: /\.(png|svg|jpg|gif)$/,
+    //       use: ['file-loader']
+    //     },
+    //     {
+    //       test: /\.(woff|woff2|eot|ttf|otf)$/,
+    //       use: ['file-loader']
+    //     }
+    // ]
+  },
+  devServer: {
     contentBase: path.join(__dirname, 'build/resources/main'),
     compress: true,
     port: 9000

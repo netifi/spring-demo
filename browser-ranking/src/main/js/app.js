@@ -7,7 +7,13 @@ const { RankingServiceServer } = require('./proto/service_rsocket_pb');
 const { RankingResponse } = require('./proto/service_pb');
 
 const Marvel = {
+
+  requestQueue: [],
+  handlingRequest: false,
+
   init() {
+
+    this.addMessage('ais-hits', "Waiting for Ranking Request...");
     const url = "ws://localhost:8101/";
     const proteus = Proteus.create({
       setup: {
@@ -35,8 +41,9 @@ const Marvel = {
     });
   },
 
-  addMessage(message, element) {
-    var ul = document.getElementById(element);
+    //Very hacky, currently just assuming this is for the one and only ais-hits class
+  addMessage(clazz, message) {
+    var ul = document.getElementsByClassName(clazz)[0];
     var li = document.createElement("li");
     li.appendChild(document.createTextNode(message));
     if(ul.childElementCount >= 10){
@@ -122,7 +129,7 @@ const Marvel = {
       }
       background = Marvel.cloudinary(background, backgroundOptions);
     } else {
-      background = './img/profile-bg-default.gif';
+      background = require('./img/profile-bg-default.gif');
     }
 
     // Background image for profile
@@ -143,7 +150,7 @@ const Marvel = {
       }
       backgroundProfile = Marvel.cloudinary(backgroundProfile, backgroundProfileOptions);
     } else {
-      backgroundProfile = './img/profile-bg-default.gif';
+      backgroundProfile = require('./img/profile-bg-default.gif');
     }
 
     // All items are defered loading their images until in viewport, except
@@ -259,6 +266,18 @@ const Marvel = {
     });
   },
   rank(rankingRequest) {
+    return new Single(subscriber => {
+        subscriber.onSubscribe(); // fix
+        if (this.handlingRequest) {
+            this.requestQueue.push([rankingRequest, subscriber]);
+        } else {
+            $('#hits .ais-hits').empty();
+            this.handlingRequest = true;
+            this.handleRankingRequest(rankingRequest, subscriber);
+        }
+    });
+  },
+  handleRankingRequest(rankingRequest, subscriber){
     let data = rankingRequest.toObject().recordsList;
     Marvel.lazyloadCounter = 0;
     let hits = $('#hits .ais-hits');
@@ -266,23 +285,27 @@ const Marvel = {
     let emptyTemplate = $('#noResultsTemplate').html();
     let compiledTemplate = _.template(hitTemplate.trim());
 
-    hits.empty();
-    return new Single(subscriber => {
-      subscriber.onSubscribe();
-      _.forEach(data, (element) => {
+    _.forEach(data, (element) => {
         let html = compiledTemplate(Marvel.transformItem(element)).trim();
         let $html = $($.parseHTML(html));
         $html.click(() => {
-          let resp = new RankingResponse();
-          resp.setId(element.id);
-          subscriber.onComplete(resp);
-          hits.empty();
+            let resp = new RankingResponse();
+            resp.setId(element.id);
+            subscriber.onComplete(resp);
+            hits.empty();
+            const nextRequest = this.requestQueue.shift();
+            if(nextRequest){
+              this.handleRankingRequest(nextRequest[0], nextRequest[1]); //stored reqest/sub pair
+            } else {
+              this.addMessage('ais-hits', "Waiting for Ranking Request...");
+              this.handlingRequest = false;
+            }
         });
         hits.append($html);
-      });
-      this.onRender();
     });
+    this.onRender();
   }
+
 };
 
 Marvel.init();
