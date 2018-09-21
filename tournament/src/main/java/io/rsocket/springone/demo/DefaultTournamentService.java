@@ -6,6 +6,7 @@ import io.rsocket.rpc.annotations.Client;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 
 import java.math.RoundingMode;
@@ -25,28 +26,39 @@ public class DefaultTournamentService implements TournamentService {
   @Override
   public Flux<RoundResult> tournament(RecordsRequest request, ByteBuf metadata) {
     int maxRounds = IntMath.log2(request.getMaxResults(), RoundingMode.UP);
-    return tournament(recordsService.records(request), 1, maxRounds);
+    return tournament(recordsService.records(request), maxRounds);
   }
 
-  private Flux<RoundResult> tournament(Flux<Record> records, int round, int maxRounds) {
-    Flux<Record> winners = round(records);
-    Flux<RoundResult> result = winners
+  private Flux<RoundResult> tournament(Flux<Record> records, int round) {
+    ConnectableFlux<Record> winners = round(records).publish();
+    Flux<RoundResult> roundResult = winners
         .map(winner -> RoundResult.newBuilder()
             .setRound(round)
             .setWinner(winner)
             .build());
-    return (round < maxRounds) ? result
-        .mergeWith(tournament(winners, round + 1, maxRounds)) : result;
+
+    Flux<RoundResult> tournamentResult = (round > 1)
+        ? roundResult.mergeWith(tournament(winners, round - 1))
+        : roundResult;
+    winners.connect();
+
+    return tournamentResult;
   }
 
   private Flux<Record> round(Flux<Record> records) {
-    return records.window(WINDOW_SIZE)
-        .flatMap(window -> window.collectMap(Record::getId))
-        .flatMapSequential(map -> {
-          RankingRequest rankingRequest = RankingRequest.newBuilder().addAllRecords(map.values()).build();
-          return rankingService
-              .rank(rankingRequest)
-              .map(response -> map.get(response.getId()));
-        }, CONCURRENCY);
+    return records
+        .window(WINDOW_SIZE)
+        .flatMap(window ->
+            window
+                .collectMap(Record::getId)
+                .flatMap(map -> {
+                  RankingRequest rankingRequest = RankingRequest.newBuilder().addAllRecords(map.values()).build();
+                  return rankingService
+                      .rank(rankingRequest)
+                      .map(response -> {
+                        logger.info("{} -> {}", map.keySet(), response.getId());
+                        return map.get(response.getId());
+                      });
+                }), CONCURRENCY);
   }
 }
