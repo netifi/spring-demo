@@ -14,8 +14,8 @@ import java.math.RoundingMode;
 @Component
 public class DefaultTournamentService implements TournamentService {
   private static final Logger logger = LogManager.getLogger(DefaultTournamentService.class);
-  private static int WINDOW_SIZE = 2;
-  private static int CONCURRENCY = 4;
+  private static final int WINDOW_SIZE = 2;
+  private static final int CONCURRENCY = 4;
 
   @Group("springone.demo.records")
   private RecordsServiceClient recordsService;
@@ -55,6 +55,7 @@ public class DefaultTournamentService implements TournamentService {
                   RankingRequest rankingRequest = RankingRequest.newBuilder().addAllRecords(map.values()).build();
                   return rankingService
                       .rank(rankingRequest)
+                      .retry()
                       .map(response -> {
                         logger.info("{} -> {}", map.keySet(), response.getId());
                         return map.get(response.getId());
