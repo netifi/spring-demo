@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 
 import java.math.RoundingMode;
+import java.util.function.Function;
 
 @Component
 public class DefaultTournamentService implements TournamentService {
@@ -35,18 +36,17 @@ public class DefaultTournamentService implements TournamentService {
             .setRound(round)
             .setWinner(winner)
             .build());
-    return (round < maxRounds) ? result
-        .mergeWith(tournament(winners, round + 1, maxRounds)) : result;
+
+    return (round < maxRounds)
+      ? Flux.just(result, Flux.defer(() -> tournament(winners, round + 1, maxRounds)))
+            .concatMap(Function.identity(), 1)
+      : result;
   }
 
   private Flux<Record> round(Flux<Record> records) {
-    return records.window(WINDOW_SIZE)
-        .flatMap(window -> window.collectMap(Record::getId))
-        .flatMapSequential(map -> {
-          RankingRequest rankingRequest = RankingRequest.newBuilder().addAllRecords(map.values()).build();
-          return rankingService
-              .rank(rankingRequest)
-              .map(response -> map.get(response.getId()));
-        }, CONCURRENCY);
+    return records.buffer(WINDOW_SIZE)
+        .map(buffer -> RankingRequest.newBuilder().addAllRecords(buffer).build())
+        .log()
+        .transform(rankingService::rank);
   }
 }

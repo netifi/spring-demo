@@ -5,6 +5,8 @@ const { Proteus } = require('proteus-js-client');
 const { Single } = require('rsocket-flowable');
 const { RankingServiceServer } = require('./proto/service_rsocket_pb');
 const { RankingResponse } = require('./proto/service_pb');
+const { QueuingFlowableProcessor } = require('rsocket-rpc-core');
+const MicroModal = require('micromodal').default;
 
 const Marvel = {
   init() {
@@ -19,6 +21,8 @@ const Marvel = {
           url,
       }
     });
+
+    MicroModal.init();
 
     proteus.addService('io.rsocket.springone.demo.RankingService', new RankingServiceServer(this));
 
@@ -258,30 +262,44 @@ const Marvel = {
       inViewport(hit, {offset: 50}, onVisible);
     });
   },
-  rank(rankingRequest) {
-    let data = rankingRequest.toObject().recordsList;
-    Marvel.lazyloadCounter = 0;
-    let hits = $('#hits .ais-hits');
-    let hitTemplate = $('#hitTemplate').html();
-    let emptyTemplate = $('#noResultsTemplate').html();
-    let compiledTemplate = _.template(hitTemplate.trim());
+  rank(rankingRequestStream) {
+    const responseProcessor = new QueuingFlowableProcessor(1);
 
-    hits.empty();
-    return new Single(subscriber => {
-      subscriber.onSubscribe();
-      _.forEach(data, (element) => {
-        let html = compiledTemplate(Marvel.transformItem(element)).trim();
-        let $html = $($.parseHTML(html));
-        $html.click(() => {
-          let resp = new RankingResponse();
-          resp.setId(element.id);
-          subscriber.onComplete(resp);
-          hits.empty();
+    rankingRequestStream.subscribe({
+      onNext: rankingRequest => {
+        let data = rankingRequest.toObject().recordsList;
+        Marvel.lazyloadCounter = 0;
+        let hits = $('#hits .ais-hits');
+        let hitTemplate = $('#hitTemplate').html();
+        let emptyTemplate = $('#noResultsTemplate').html();
+        let compiledTemplate = _.template(hitTemplate.trim());
+        let subscription = this.subscription;
+
+        hits.empty();
+        _.forEach(data, (element) => {
+          let html = compiledTemplate(Marvel.transformItem(element)).trim();
+          let $html = $($.parseHTML(html));
+          $html.click(() => {
+            let resp = new RankingResponse();
+            resp.setId(element.id);
+            responseProcessor.onNext(resp);
+            MicroModal.show("modal-1", {
+              onClose: _ => subscription.request(1)
+            });
+          });
+          hits.append($html);
         });
-        hits.append($html);
-      });
-      this.onRender();
+        this.onRender();
+      },
+      onSubscribe: subscription => {
+        this.subscription = subscription;
+        MicroModal.show("modal-1", {
+          onClose: _ => subscription.request(1)
+        });
+      }
     });
+
+    return responseProcessor;
   }
 };
 

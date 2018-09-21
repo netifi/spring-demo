@@ -23,7 +23,7 @@ public class DefaultRecordsService implements RecordsService {
     this.db = Database
         .nonBlocking()
         // the jdbc url of the connections to be placed in the pool
-        .url("jdbc:postgresql:marvel")
+        .url("jdbc:postgresql:postgres?user=user&password=user")
         // an unused connection will be closed after thirty minutes
         .maxIdleTime(30, TimeUnit.MINUTES)
         // connections are checked for healthiness on checkout if the connection
@@ -55,6 +55,11 @@ public class DefaultRecordsService implements RecordsService {
           } catch (Throwable t) {
             throw Exceptions.propagate(t);
           }
-        }));
+        }))
+        .onBackpressureBuffer()
+        .doOnRequest(l -> {
+            System.out.println(l);
+        })
+        .repeat();
   }
 }

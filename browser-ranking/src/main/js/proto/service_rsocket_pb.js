@@ -74,23 +74,27 @@ var RankingServiceClient = function () {
   function RankingServiceClient(rs, tracer, meterRegistry) {
     this._rs = rs;
     this._tracer = tracer;
-    this.rankTrace = rsocket_rpc_tracing.traceSingle(tracer, "RankingService", {"rsocket.rpc.service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"rsocket.rpc.role": "client"});
-    this.rankMetrics = rsocket_rpc_metrics.timedSingle(meterRegistry, "RankingService", {"service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"role": "client"});
+    this.rankTrace = rsocket_rpc_tracing.trace(tracer, "RankingService", {"rsocket.rpc.service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"rsocket.rpc.role": "client"});
+    this.rankMetrics = rsocket_rpc_metrics.timed(meterRegistry, "RankingService", {"service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"role": "client"});
   }
-  RankingServiceClient.prototype.rank = function rank(message, metadata) {
+  RankingServiceClient.prototype.rank = function rank(messages, metadata) {
     const map = {};
     return this.rankMetrics(
-      this.rankTrace(map)(new rsocket_flowable.Single(subscriber => {
-        var dataBuf = Buffer.from(message.serializeBinary());
+      this.rankTrace(map)(new rsocket_flowable.Flowable(subscriber => {
+        var dataBuf;
         var tracingMetadata = rsocket_rpc_tracing.mapToBuffer(map);
-        var metadataBuf = rsocket_rpc_frames.encodeMetadata('io.rsocket.springone.demo.RankingService', 'rank', tracingMetadata, metadata || Buffer.alloc(0));
-          this._rs.requestResponse({
-            data: dataBuf,
-            metadata: metadataBuf
-          }).map(function (payload) {
+        var metadataBuf ;
+          this._rs.requestChannel(messages.map(function (message) {
+            dataBuf = Buffer.from(message.serializeBinary());
+            metadataBuf = rsocket_rpc_frames.encodeMetadata('io.rsocket.springone.demo.RankingService', 'rank', tracingMetadata, metadata || Buffer.alloc(0));
+            return {
+              data: dataBuf,
+              metadata: metadataBuf
+            };
+          })).map(function (payload) {
             //TODO: resolve either 'https://github.com/rsocket/rsocket-js/issues/19' or 'https://github.com/google/protobuf/issues/1319'
             var binary = !payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data);
-            return service_pb.RankingResponse.deserializeBinary(binary);
+            return service_pb.Record.deserializeBinary(binary);
           }).subscribe(subscriber);
         })
       )
@@ -160,7 +164,7 @@ var RecordsServiceServer = function () {
   RecordsServiceServer.prototype.requestChannel = function requestChannel(payloads) {
     let once = false;
     return new rsocket_flowable.Flowable(subscriber => {
-      const payloadProxy = new rsocket_rpc_core.QueuingFlowableProcessor();
+      const payloadProxy = new rsocket_rpc_core.QueuingFlowableProcessor(1);
       payloads.subscribe({
         onNext: payload => {
           if(!once){
@@ -253,7 +257,7 @@ var TournamentServiceServer = function () {
   TournamentServiceServer.prototype.requestChannel = function requestChannel(payloads) {
     let once = false;
     return new rsocket_flowable.Flowable(subscriber => {
-      const payloadProxy = new rsocket_rpc_core.QueuingFlowableProcessor();
+      const payloadProxy = new rsocket_rpc_core.QueuingFlowableProcessor(1);
       payloads.subscribe({
         onNext: payload => {
           if(!once){
@@ -291,8 +295,8 @@ var RankingServiceServer = function () {
   function RankingServiceServer(service, tracer, meterRegistry) {
     this._service = service;
     this._tracer = tracer;
-    this.rankTrace = rsocket_rpc_tracing.traceSingleAsChild(tracer, "RankingService", {"rsocket.rpc.service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"rsocket.rpc.role": "server"});
-    this.rankMetrics = rsocket_rpc_metrics.timedSingle(meterRegistry, "RankingService", {"service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"role": "server"});
+    this.rankTrace = rsocket_rpc_tracing.traceAsChild(tracer, "RankingService", {"rsocket.rpc.service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"rsocket.rpc.role": "server"});
+    this.rankMetrics = rsocket_rpc_metrics.timed(meterRegistry, "RankingService", {"service": "io.rsocket.springone.demo.RankingService"}, {"method": "rank"}, {"role": "server"});
     this._channelSwitch = (payload, restOfMessages) => {
       if (payload.metadata == null) {
         return rsocket_flowable.Flowable.error(new Error('metadata is empty'));
@@ -301,6 +305,23 @@ var RankingServiceServer = function () {
       var spanContext = rsocket_rpc_tracing.deserializeTraceData(this._tracer, payload.metadata);
       let deserializedMessages;
       switch(method){
+        case 'rank':
+          deserializedMessages = restOfMessages.map(payload => {
+            var binary = !payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data);
+            return service_pb.RankingRequest.deserializeBinary(binary);
+          });
+          return this.rankMetrics(
+            this.rankTrace(spanContext)(
+              this._service
+                .rank(deserializedMessages, payload.metadata)
+                .map(function (message) {
+                  return {
+                    data: Buffer.from(message.serializeBinary()),
+                    metadata: Buffer.alloc(0)
+                  }
+                })
+              )
+            );
         default:
           return rsocket_flowable.Flowable.error(new Error('unknown method'));
       }
@@ -310,35 +331,7 @@ var RankingServiceServer = function () {
     throw new Error('fireAndForget() is not implemented');
   };
   RankingServiceServer.prototype.requestResponse = function requestResponse(payload) {
-    try {
-      if (payload.metadata == null) {
-        return rsocket_flowable.Single.error(new Error('metadata is empty'));
-      }
-      var method = rsocket_rpc_frames.getMethod(payload.metadata);
-      var spanContext = rsocket_rpc_tracing.deserializeTraceData(this._tracer, payload.metadata);
-      switch (method) {
-        case 'rank':
-          return this.rankMetrics(
-            this.rankTrace(spanContext)(new rsocket_flowable.Single(subscriber => {
-              var binary = !payload.data || payload.data.constructor === Buffer || payload.data.constructor === Uint8Array ? payload.data : new Uint8Array(payload.data);
-              return this._service
-                .rank(service_pb.RankingRequest.deserializeBinary(binary), payload.metadata)
-                .map(function (message) {
-                  return {
-                    data: Buffer.from(message.serializeBinary()),
-                    metadata: Buffer.alloc(0)
-                  }
-                }).subscribe(subscriber);
-              }
-            )
-          )
-        );
-        default:
-          return rsocket_flowable.Single.error(new Error('unknown method'));
-      }
-    } catch (error) {
-      return rsocket_flowable.Single.error(error);
-    }
+    return rsocket_flowable.Single.error(new Error('requestResponse() is not implemented'));
   };
   RankingServiceServer.prototype.requestStream = function requestStream(payload) {
     return rsocket_flowable.Flowable.error(new Error('requestStream() is not implemented'));
@@ -346,7 +339,7 @@ var RankingServiceServer = function () {
   RankingServiceServer.prototype.requestChannel = function requestChannel(payloads) {
     let once = false;
     return new rsocket_flowable.Flowable(subscriber => {
-      const payloadProxy = new rsocket_rpc_core.QueuingFlowableProcessor();
+      const payloadProxy = new rsocket_rpc_core.QueuingFlowableProcessor(1);
       payloads.subscribe({
         onNext: payload => {
           if(!once){

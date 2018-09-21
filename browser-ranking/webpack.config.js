@@ -25,10 +25,8 @@ module.exports = {
   },
   module: {
     loaders
-	},
-	devServer: {
-    contentBase: path.join(__dirname, 'build/resources/main'),
-    compress: true,
+  },
+  devServer: {
     port: 9000
   },
   plugins: [

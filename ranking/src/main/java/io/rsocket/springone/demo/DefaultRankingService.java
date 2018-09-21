@@ -1,13 +1,15 @@
 package io.rsocket.springone.demo;
 
+import java.util.Collections;
+import java.util.Comparator;
+
 import io.netty.buffer.ByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.stereotype.Component;
-import reactor.core.publisher.Mono;
+import org.reactivestreams.Publisher;
+import reactor.core.publisher.Flux;
 
-import java.util.Collections;
-import java.util.Comparator;
+import org.springframework.stereotype.Component;
 
 @Component
 public class DefaultRankingService implements RankingService {
@@ -16,10 +18,8 @@ public class DefaultRankingService implements RankingService {
       Comparator.comparingInt(record -> record.getData().getRanking().getStoryCount());
 
   @Override
-  public Mono<RankingResponse> rank(RankingRequest request, ByteBuf metadata) {
-    Record record = Collections.max(request.getRecordsList(), comparator);
-    return Mono.just(RankingResponse.newBuilder()
-        .setId(record.getId())
-        .build());
+  public Flux<Record> rank(Publisher<RankingRequest> requestStream, ByteBuf metadata) {
+    return Flux.from(requestStream)
+               .map(request -> Collections.max(request.getRecordsList(), comparator));
   }
 }

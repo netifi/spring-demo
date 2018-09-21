@@ -15,7 +15,7 @@ service TournamentService {
 }
 
 service RankingService {
-    rpc rank (RankingRequest) returns (RankingResponse) {}
+    rpc rank (stream RankingRequest) returns (stream Record) {}
 }
 
 message RecordsRequest {
@@ -30,10 +30,6 @@ message RoundResult {
 
 message RankingRequest {
     repeated Record records = 1;
-}
-
-message RankingResponse {
-    int32 id = 1;
 }
 
 message Record {
