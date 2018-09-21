@@ -7,7 +7,7 @@ subprojects {
     ext {
         protobufVersion = '3.6.1'
         rsocketRpcVersion = '0.2.2'
-        proteusSpringVersion = '0.4.3'
+        proteusSpringVersion = '0.4.4'
         springBootDependenciesVersion = '2.0.5.RELEASE'
     }
 
