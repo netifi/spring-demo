@@ -14,15 +14,22 @@ dependencyManagement {
     }
 }
 
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { setUrl("http://repo.spring.io/release") }
+    maven { setUrl("http://repo.spring.io/milestone") }
+    maven { setUrl("https://repo.spring.io/snapshot") }
+}
+
 dependencies {
     compile project(':service-idl')
 
     compile "io.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
 
     compile "com.google.protobuf:protobuf-java-util:$protobufVersion"
-    compile 'io.projectreactor.addons:reactor-adapter:3.1.7.RELEASE'
-    compile 'com.github.davidmoten:rxjava2-jdbc:0.1-RC38'
-    compile 'org.postgresql:postgresql:42.2.4'
+    compile "io.r2dbc:r2dbc-postgresql:1.0.0.BUILD-SNAPSHOT"
+    compile "io.projectreactor.netty:reactor-netty:0.8.1.BUILD-SNAPSHOT"
 }
 
 configurations.all {
