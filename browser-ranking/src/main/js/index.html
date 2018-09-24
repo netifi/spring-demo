@@ -49,14 +49,6 @@
 
     <script id="hitTemplate" language="x-template">
       <div class="ais-hits--item">
-        <% if(mainColorRgb) { %>
-        <style>
-        .hit__<%= uuid %> .hit--content:after {
-          background: linear-gradient(to bottom, rgba(<%= mainColorRgb %>, 0), rgba(<%= mainColorRgb %>, 1) 100%);
-        }
-        </style>
-        <% } %>
-
         <% if(thumbnail) { %>
         <style>
         .hit__<%= uuid %>.hit__inViewport .hit--thumbnail:before {
