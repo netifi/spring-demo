@@ -12,17 +12,17 @@ CREATE TABLE records (
     name varchar,
     partners varchar[],
     powers varchar[],
-    comicCount int,
-    eventCount int,
-    pageviewCount int,
-    serieCount int,
-    storyCount int,
-    secretIdentities varchar[],
+    comic_count int,
+    event_count int,
+    pageview_count int,
+    serie_count int,
+    story_count int,
+    secret_identities varchar[],
     species varchar[],
-    superName varchar,
+    supername varchar,
     teams varchar[],
-    marvelUrl varchar,
-    wikipediaUrl varchar
+    marvel_url varchar,
+    wikipedia_url varchar
 );
 
-\copy records(aliases,authors,description,background,thumbnail,name,partners,powers,comicCount,eventCount,pageviewCount,serieCount,storyCount,secretIdentities,species,superName,teams,marvelUrl,wikipediaUrl) FROM 'records.csv' DELIMITER ',' CSV
+\copy records(aliases,authors,description,background,thumbnail,name,partners,powers,comic_count,event_count,pageview_count,serie_count,story_count,secret_identities,species,supername,teams,marvel_url,wikipedia_url) FROM 'records.csv' DELIMITER ',' CSV

@@ -20,7 +20,8 @@ public class ClientRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         RecordsRequest request = RecordsRequest.newBuilder().setMaxResults(16).build();
 
-        Flux<RoundResult> round1 = tournamentService.tournament(request);
+        Flux<RoundResult> round1 = tournamentService.tournament(request)
+                                                    .repeat();
 
         for (RoundResult record: round1.toIterable()) {
             logger.info(JsonFormat.printer().print(record));
