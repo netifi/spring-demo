@@ -15,11 +15,10 @@ dependencyManagement {
 }
 
 repositories {
-    mavenLocal()
     mavenCentral()
     maven { setUrl("http://repo.spring.io/release") }
     maven { setUrl("http://repo.spring.io/milestone") }
-    maven { setUrl("https://repo.spring.io/snapshot") }
+    maven { setUrl("http://repo.spring.io/snapshot") }
 }
 
 dependencies {
@@ -27,10 +26,8 @@ dependencies {
 
     compile "io.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
 
-    compile "com.google.protobuf:protobuf-java-util:$protobufVersion"
-
     //data
-    compile "io.r2dbc:r2dbc-postgresql:1.0.0.BUILD-SNAPSHOT"
+    compile "io.r2dbc:r2dbc-postgresql:1.0.0.M5"
     compile "org.springframework.data:spring-data-commons:2.1.0.RELEASE"
     compile "org.springframework.data:spring-data-jdbc:1.0.0.r2dbc-SNAPSHOT"
 
