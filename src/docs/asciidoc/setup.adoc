@@ -43,7 +43,7 @@ docker exec -ti postgres sh -c 'cat records.json | psql --username "$POSTGRES_US
 
 == Setup Proteus Broker
 
-Along with the Postgres, we have and additional component required for running Proteus
+Along with Postgres, we have and additional component required for running Proteus
 Framework called Proteus Broker. Proteus Broker is a zero-copy data-routing service
 which is responsible for connecting microservices. In order to run the Proteus Broker
 we need to create and run dockerized instance of Proteus Broker using the following
