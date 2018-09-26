@@ -18,13 +18,21 @@ public class ClientRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        RecordsRequest request = RecordsRequest.newBuilder().setMaxResults(16).build();
+        RecordsRequest request = RecordsRequest.newBuilder().setMaxResults(40).build();
 
-        Flux<RoundResult> round1 = tournamentService.tournament(request)
-                                                    .repeat();
+        Flux<RoundResult> round1 = tournamentService.tournament(request);
 
         for (RoundResult record: round1.toIterable()) {
-            logger.info(JsonFormat.printer().print(record));
+
+            if (record.getRound() == 1){
+            	logger.info(
+            			"\n=----------------------------------------------------------="+
+					            "\n< @_@ > SUPER WINNER < @_@ >  ===> "+record.getWinner().getSuperName()+
+					            "\n=----------------------------------------------------------=");
+            }
+            else {
+	            logger.info(JsonFormat.printer().print(record));
+            }
         }
 
         // Exit

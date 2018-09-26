@@ -10,6 +10,7 @@ import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 
 import java.math.RoundingMode;
+import java.time.Duration;
 
 @Component
 public class DefaultTournamentService implements TournamentService {
@@ -46,20 +47,24 @@ public class DefaultTournamentService implements TournamentService {
   }
 
   private Flux<Record> round(Flux<Record> records) {
-    return records
-        .window(WINDOW_SIZE)
-        .flatMap(window ->
-            window
-                .collectMap(Record::getId)
-                .flatMap(map -> {
-                  RankingRequest rankingRequest = RankingRequest.newBuilder().addAllRecords(map.values()).build();
-                  return rankingService
-                      .rank(rankingRequest)
-                      .retry()
-                      .map(response -> {
-                        logger.info("{} -> {}", map.keySet(), response.getId());
-                        return map.get(response.getId());
-                      });
-                }), CONCURRENCY);
+      return records
+              .window(WINDOW_SIZE)
+              .flatMap(window ->
+                      window.collectMap(Record::getId)
+                            .flatMap(map -> {
+                                if (map.size() > 1) {
+                                    RankingRequest rankingRequest = RankingRequest.newBuilder().addAllRecords(map.values()).build();
+                                    return rankingService
+                                              .rank(rankingRequest)
+                                              .timeout(Duration.ofSeconds(8))
+                                              .retry()
+                                              .map(response -> {
+                                                  logger.info("{} -> {}", map.keySet(), response.getId());
+                                                  return map.get(response.getId());
+                                              });
+                                  } else {
+                                      return Flux.fromIterable(map.values()).next();
+                                  }
+                              }), CONCURRENCY);
   }
 }
