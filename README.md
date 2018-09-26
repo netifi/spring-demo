@@ -1,6 +1,10 @@
 # springone-demo
 This project provides a scaffolding for getting up and running quickly with [Netifi Proteus](http://www.netifi.com/proteus.html) on [Spring Boot](https://spring.io/projects/spring-boot)
 
+# Following Guideline
+
+In order to learn more about the project, plese visit the following webpage [https://netifi.github.io/springone-demo/]
+
 ## Bugs and Feedback
 For bugs, questions, and discussions please use the [Github Issues](https://github.com/netifi/springone-demo/issues).
 
