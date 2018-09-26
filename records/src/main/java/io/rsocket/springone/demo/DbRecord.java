@@ -1,10 +1,12 @@
 package io.rsocket.springone.demo;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Table;
 
 /**
  * @author Stephane Maldini
  */
+@Table("records")
 public class DbRecord {
 
 	@Id
