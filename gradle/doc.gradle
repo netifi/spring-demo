@@ -18,8 +18,9 @@ configure(rootProject) {
 			   'source-highlighter': 'coderay'
 
 	doLast {
-	  file("$outputDir/pdf/index.pdf").renameTo
-	  ("$outputDir/pdf/spring-superheroes-reference-guide-${version}.pdf")
+	  file("$outputDir/pdf/index.pdf").renameTo(
+		"$outputDir/pdf/spring-superheroes-reference-guide-${version}.pdf"
+	  )
 	}
   }
 }
