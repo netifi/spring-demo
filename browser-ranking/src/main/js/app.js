@@ -15,7 +15,7 @@ const Marvel = {
 
     $('#hits .ais-hits').empty();
     this.addMessage('ais-hits', "Waiting for Ranking Request...");
-    const url = "ws://springone.netifi.io:8101/";
+    const url = "ws://localhost:8101/";
     const proteus = Proteus.create({
       setup: {
           group: 'springone.demo.ranking',
@@ -90,17 +90,9 @@ const Marvel = {
     return `${baseUrl}${stringOptions.join(',')}/${url}`;
   },
 
-  transformItem(wrapper) {
-    const data = wrapper.data;
-    // Main color
-    let mainColorHexa = _.get(data, 'mainColor.hexa');
-    let mainColorRgb = null;
-    if (mainColorHexa) {
-      mainColorRgb = `${data.mainColor.red},${data.mainColor.green},${data.mainColor.blue}`;
-    }
-
+  transformItem(data) {
     // Thumbnail
-    let thumbnail = _.get(data, 'images.thumbnail');
+    let thumbnail = _.get(data, 'thumbnail');
     if (thumbnail) {
       thumbnail = Marvel.cloudinary(thumbnail, {
         width: 200,
@@ -113,7 +105,7 @@ const Marvel = {
     }
 
     // Background image
-    let background = _.get(data, 'images.background');
+    let background = _.get(data, 'background');
     if (background) {
       let backgroundOptions = {
         width: 450,
@@ -121,20 +113,13 @@ const Marvel = {
         crop: 'scale',
         format: 'auto'
       };
-      if (mainColorHexa) {
-        backgroundOptions = {
-          ...backgroundOptions,
-          colorize: 40,
-          color: mainColorHexa
-        };
-      }
       background = Marvel.cloudinary(background, backgroundOptions);
     } else {
       background = require('./img/profile-bg-default.gif');
     }
 
     // Background image for profile
-    let backgroundProfile = _.get(data, 'images.background');
+    let backgroundProfile = _.get(data, 'background');
     if (backgroundProfile) {
       let backgroundProfileOptions = {
         width: 600,
@@ -142,13 +127,6 @@ const Marvel = {
         crop: 'scale',
         format: 'auto'
       };
-      if (mainColorHexa) {
-        backgroundProfileOptions = {
-          ...backgroundProfileOptions,
-          colorize: 40,
-          color: mainColorHexa
-        };
-      }
       backgroundProfile = Marvel.cloudinary(backgroundProfile, backgroundProfileOptions);
     } else {
       backgroundProfile = require('./img/profile-bg-default.gif');
@@ -199,14 +177,12 @@ const Marvel = {
     let isMatchingInNotDisplayedAttributes = !_.isEmpty(readableMatchingAttributes);
 
     let displayData = {
-      uuid: wrapper.id,
+      uuid: data.id,
       name: data.name,
       description: data.description,
       highlightedName: Marvel.getHighlightedValue(data, 'name'),
       highlightedDescription: Marvel.getHighlightedValue(data, 'description'),
       inViewport,
-      mainColorRgb,
-      mainColorHexa,
       thumbnail,
       background,
       matchingAttributes: readableMatchingAttributes,

@@ -12,8 +12,7 @@ import java.util.Comparator;
 @Component
 public class DefaultRankingService implements RankingService {
   private static final Logger logger = LogManager.getLogger(DefaultRankingService.class);
-  private final Comparator<Record> comparator =
-      Comparator.comparingInt(record -> record.getData().getRanking().getStoryCount());
+  private final Comparator<Record> comparator = Comparator.comparingInt(Record::getStoryCount);
 
   @Override
   public Mono<RankingResponse> rank(RankingRequest request, ByteBuf metadata) {

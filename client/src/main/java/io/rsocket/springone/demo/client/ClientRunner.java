@@ -2,9 +2,7 @@ package io.rsocket.springone.demo.client;
 
 import com.google.protobuf.util.JsonFormat;
 import io.netifi.proteus.spring.core.annotation.Group;
-import io.rsocket.springone.demo.RecordsRequest;
-import io.rsocket.springone.demo.RoundResult;
-import io.rsocket.springone.demo.TournamentServiceClient;
+import io.rsocket.springone.demo.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.boot.CommandLineRunner;
@@ -20,9 +18,10 @@ public class ClientRunner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        RecordsRequest request = RecordsRequest.newBuilder().setMaxResults(256).build();
+        RecordsRequest request = RecordsRequest.newBuilder().setMaxResults(16).build();
 
-        Flux<RoundResult> round1 = tournamentService.tournament(request);
+        Flux<RoundResult> round1 = tournamentService.tournament(request)
+                                                    .repeat();
 
         for (RoundResult record: round1.toIterable()) {
             logger.info(JsonFormat.printer().print(record));

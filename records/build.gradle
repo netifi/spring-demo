@@ -14,15 +14,31 @@ dependencyManagement {
     }
 }
 
+repositories {
+    mavenCentral()
+    maven { setUrl("http://repo.spring.io/release") }
+    maven { setUrl("http://repo.spring.io/milestone") }
+    maven { setUrl("http://repo.spring.io/snapshot") }
+}
+
 dependencies {
     compile project(':service-idl')
 
     compile "io.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
 
-    compile "com.google.protobuf:protobuf-java-util:$protobufVersion"
-    compile 'io.projectreactor.addons:reactor-adapter:3.1.7.RELEASE'
-    compile 'com.github.davidmoten:rxjava2-jdbc:0.1-RC38'
-    compile 'org.postgresql:postgresql:42.2.4'
+    //data
+    compile "io.r2dbc:r2dbc-postgresql:1.0.0.M5"
+    compile "org.springframework.data:spring-data-commons:2.1.0.RELEASE"
+    compile "org.springframework.data:spring-data-jdbc:1.0.0.r2dbc-SNAPSHOT"
+
+    //latest netty because conflict with netty 0.7.9
+    compile "io.projectreactor.netty:reactor-netty:0.8.1.BUILD-SNAPSHOT"
+    compile "io.projectreactor:reactor-core:3.2.0.RELEASE"
+
+    //export micrometer/prometheus
+    compile "org.springframework.boot:spring-boot-starter-webflux"
+    compile "org.springframework.boot:spring-boot-starter-actuator"
+    compile "io.micrometer:micrometer-registry-prometheus"
 }
 
 configurations.all {
