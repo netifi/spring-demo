@@ -21,6 +21,9 @@ configure(rootProject) {
 	  file("$outputDir/pdf/index.pdf").renameTo(
 		"$outputDir/pdf/spring-superheroes-reference-guide-${version}.pdf"
 	  )
+	  file("$outputDir/html5").renameTo(
+		"$projectDir/docs"
+	  )
 	}
   }
 }
