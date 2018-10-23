@@ -1,20 +1,76 @@
+buildscript {
+  ext {
+	springBootVersion = '2.1.0.RC1'
+  }
+  repositories {
+	jcenter()
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+  }
+
+  dependencies {
+	classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.8'
+	classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.16'
+  }
+}
+
+apply from: "gradle/doc.gradle"
+
 subprojects {
-    apply plugin: 'idea'
+  apply plugin: 'java'
+  apply plugin: 'idea'
+  apply plugin: 'io.spring.dependency-management'
 
-    group 'io.rsocket.springone.demo'
-    version '1.0.0'
+  group 'io.rsocket.springone.demo'
+  version '1.0.0'
 
-    ext {
-        protobufVersion = '3.6.1'
-        rsocketRpcVersion = '0.2.2'
-        proteusSpringVersion = '0.4.4'
-        springBootDependenciesVersion = '2.0.5.RELEASE'
-    }
+  sourceCompatibility = 1.8
 
-    repositories {
-        jcenter()
-        maven {
-            url  "https://dl.bintray.com/netifi/netifi-oss"
-        }
-    }
+
+  ext['protobuf.version'] = '3.6.1'
+  ext['rsocket.version'] = '0.11.9'
+  ext['rsocket-rpc.version'] = '0.2.4'
+  ext['proteus-spring.version'] = '0.4.4'
+
+  dependencyManagement {
+	dependencies {
+	  dependencySet(group: 'com.google.protobuf', version: ext['protobuf.version']) {
+		entry 'protoc'
+		entry 'protobuf-java'
+		entry 'protobuf-java-util'
+	  }
+	  dependencySet(group: 'io.rsocket', version: ext['rsocket.version']) {
+		entry 'rsocket-core'
+		entry 'rsocket-transport-netty'
+		entry 'rsocket-transport-local'
+	  }
+	  dependencySet(group: 'io.rsocket.rpc', version: ext['rsocket-rpc.version']) {
+		entry 'rsocket-rpc-core'
+		entry 'rsocket-rpc-metrics-idl'
+		entry 'rsocket-rpc-protobuf'
+		entry 'rsocket-rpc-protobuf-idl'
+	  }
+	  dependency "io.netifi.proteus:proteus-spring-boot-starter:${ext['proteus-spring.version']}"
+	}
+  }
+
+  repositories {
+	jcenter()
+	maven { 
+	  url 'http://repo.spring.io/libs-snapshot'
+	}
+	maven {
+	  url "https://dl.bintray.com/netifi/netifi-oss"
+	}
+  }
+}
+
+configurations.all {
+  resolutionStrategy {
+	dependencySubstitution {
+	  substitute module('com.google.guava:guava') with module('com.google.guava:guava:22.0')
+	}
+  }
 }

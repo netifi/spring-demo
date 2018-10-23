@@ -1,12 +1,9 @@
 plugins {
     id 'com.google.protobuf' version '0.8.6'
-    id 'java'
 }
 
-sourceCompatibility = 1.8
-
 dependencies {
-    compile "io.rsocket.rpc:rsocket-rpc-core:$rsocketRpcVersion"
+    compile "io.rsocket.rpc:rsocket-rpc-core"
 }
 
 sourceSets {
@@ -23,11 +20,11 @@ protobuf {
     generatedFilesBaseDir = "${projectDir}/src/generated"
 
     protoc {
-        artifact = "com.google.protobuf:protoc:$protobufVersion"
+        artifact = "com.google.protobuf:protoc"
     }
     plugins {
         rsocketRpc {
-            artifact = "io.rsocket.rpc:rsocket-rpc-protobuf:$rsocketRpcVersion"
+            artifact = "io.rsocket.rpc:rsocket-rpc-protobuf"
         }
     }
     generateProtoTasks {

@@ -1,29 +1,10 @@
-plugins {
-    id 'java'
-    id 'application'
-    id 'org.springframework.boot' version '2.0.5.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.6.RELEASE'
-}
+apply plugin: 'org.springframework.boot'
+apply plugin: 'application'
 
 mainClassName = 'io.rsocket.springone.demo.RankingServiceApplication'
-sourceCompatibility = 1.8
-
-dependencyManagement {
-    imports {
-        mavenBom "org.springframework.boot:spring-boot-dependencies:${springBootDependenciesVersion}"
-    }
-}
 
 dependencies {
     compile project(':service-idl')
 
-    compile "io.netifi.proteus:proteus-spring-boot-starter:$proteusSpringVersion"
-}
-
-configurations.all {
-    resolutionStrategy {
-        dependencySubstitution {
-            substitute module('com.google.guava:guava') with module('com.google.guava:guava:22.0')
-        }
-    }
+    compile "io.netifi.proteus:proteus-spring-boot-starter"
 }

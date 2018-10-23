@@ -1,0 +1,26 @@
+configure(rootProject) {
+  apply plugin: 'org.asciidoctor.convert'
+
+  asciidoctor {
+	sources {
+	  include "index.adoc"
+	}
+	backends = ['html5', 'pdf']
+	logDocuments = true
+	options = [
+			doctype: 'book'
+	]
+	attributes docinfo: '',
+			   toc2: '',
+			   'compat-mode': '',
+			   'allow-uri-read': '',
+			   appversion: version,
+			   'source-highlighter': 'coderay'
+
+	doLast {
+	  file("$outputDir/pdf/index.pdf").renameTo(
+		"$outputDir/pdf/spring-superheroes-reference-guide-${version}.pdf"
+	  )
+	}
+  }
+}
