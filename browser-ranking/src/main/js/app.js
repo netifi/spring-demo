@@ -4,7 +4,6 @@ const inViewport = require('in-viewport');
 const { Proteus } = require('proteus-js-client');
 const { Single } = require('rsocket-flowable');
 const { RankingServiceServer } = require('./proto/service_rsocket_pb');
-const { RankingResponse } = require('./proto/service_pb');
 const { QueuingFlowableProcessor } = require('rsocket-rpc-core');
 const MicroModal = require('micromodal').default;
 
@@ -276,13 +275,11 @@ const Marvel = {
         let subscription = this.subscription;
 
         hits.empty();
-        _.forEach(data, (element) => {
+        _.forEach(data, (element, i) => {
           let html = compiledTemplate(Marvel.transformItem(element)).trim();
           let $html = $($.parseHTML(html));
           $html.click(() => {
-            let resp = new RankingResponse();
-            resp.setId(element.id);
-            responseProcessor.onNext(resp);
+            responseProcessor.onNext(rankingRequest.getRecordsList()[i]);
             MicroModal.show("modal-1", {
               onClose: _ => subscription.request(1)
             });

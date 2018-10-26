@@ -15,8 +15,8 @@
     "node-libs-browser": "^2.1.0",
     "node-sass": "^4.9.0",
     "proteus-js-client": "^0.1.4",
-    "proteus-js-core": "^0.0.9",
-    "proteus-js-frames": "^0.0.4",
+    "rsocket-rpc-protobuf": "^0.1.1",
+    "rsocket-tcp-client": "^0.0.9",
     "rsocket-flowable": "^0.0.9",
     "rsocket-types": "^0.0.9",
     "sass-loader": "^7.0.3"

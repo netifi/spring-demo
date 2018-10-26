@@ -32,7 +32,7 @@ subprojects {
   ext['protobuf.version'] = '3.6.1'
   ext['rsocket.version'] = '0.11.9'
   ext['rsocket-rpc.version'] = '0.2.4'
-  ext['proteus-spring.version'] = '0.4.4'
+  ext['proteus.version'] = '1.5.0-RC'
 
   dependencyManagement {
 	dependencies {
@@ -52,7 +52,7 @@ subprojects {
 		entry 'rsocket-rpc-protobuf'
 		entry 'rsocket-rpc-protobuf-idl'
 	  }
-	  dependency "io.netifi.proteus:proteus-spring-boot-starter:${ext['proteus-spring.version']}"
+	  dependency "io.netifi.proteus:proteus-spring-boot-starter:${ext['proteus.version']}"
 	}
   }
 
@@ -63,6 +63,20 @@ subprojects {
 	}
 	maven {
 	  url "https://dl.bintray.com/netifi/netifi-oss"
+	}
+	maven {
+	  url = 'https://artifactory.netifiinc.com/artifactory/libs-snapshot-local'
+	  credentials {
+		username = project.property('netifiArtifactoryUsername')
+		password = project.property('netifiArtifactoryPassword')
+	  }
+	}
+	maven {
+	  url = 'https://artifactory.netifiinc.com/artifactory/libs-release-local'
+	  credentials {
+		username = project.property('netifiArtifactoryUsername')
+		password = project.property('netifiArtifactoryPassword')
+	  }
 	}
   }
 }
