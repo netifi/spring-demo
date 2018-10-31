@@ -9,6 +9,9 @@ const MicroModal = require('micromodal').default;
 
 const Marvel = {
   init() {
+
+    $('#hits .ais-hits').empty();
+    this.addMessage('ais-hits', "Waiting for Ranking Request...");
     const url = "ws://localhost:8101/";
     const proteus = Proteus.create({
       setup: {
@@ -95,7 +98,7 @@ const Marvel = {
     }
 
     // Thumbnail
-    let thumbnail = _.get(data, 'images.thumbnail');
+    let thumbnail = _.get(data, 'thumbnail');
     if (thumbnail) {
       thumbnail = Marvel.cloudinary(thumbnail, {
         width: 200,
@@ -108,7 +111,7 @@ const Marvel = {
     }
 
     // Background image
-    let background = _.get(data, 'images.background');
+    let background = _.get(data, 'background');
     if (background) {
       let backgroundOptions = {
         width: 450,
@@ -129,7 +132,7 @@ const Marvel = {
     }
 
     // Background image for profile
-    let backgroundProfile = _.get(data, 'images.background');
+    let backgroundProfile = _.get(data, 'background');
     if (backgroundProfile) {
       let backgroundProfileOptions = {
         width: 600,

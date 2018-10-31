@@ -1,67 +1,43 @@
 package io.rsocket.springone.demo;
 
-import com.google.protobuf.util.JsonFormat;
+import java.util.Random;
+
 import io.netty.buffer.ByteBuf;
-import io.reactivex.exceptions.Exceptions;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.davidmoten.rx.jdbc.Database;
-import org.davidmoten.rx.jdbc.pool.DatabaseType;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
-
-import reactor.adapter.rxjava.RxJava2Adapter;
 import reactor.core.publisher.Flux;
-import reactor.util.concurrent.Queues;
+import reactor.core.publisher.Mono;
 
-import java.util.concurrent.TimeUnit;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-@Service
+@Component
 public class DefaultRecordsService implements RecordsService {
-  private static final Logger logger = LogManager.getLogger(DefaultRecordsService.class);
-  private final Database db;
+  @Autowired
+  private final RecordRepository recordRepository;
 
-  public DefaultRecordsService() {
-    this.db = Database
-        .nonBlocking()
-        // the jdbc url of the connections to be placed in the pool
-        .url("jdbc:postgresql:marvel?user=captain&password=america")
-        // an unused connection will be closed after thirty minutes
-        .maxIdleTime(30, TimeUnit.MINUTES)
-        // connections are checked for healthiness on checkout if the connection
-        // has been idle for at least 5 seconds
-        .healthCheck(DatabaseType.POSTGRES)
-        .idleTimeBeforeHealthCheck(5, TimeUnit.SECONDS)
-        // if a connection fails creation then retry after 30 seconds
-        .connectionRetryInterval(30, TimeUnit.SECONDS)
-        // the maximum number of connections in the pool
-        .maxPoolSize(Runtime.getRuntime().availableProcessors())
-        .build();
+  private final Random r = new Random();
+
+  private final Mono<Integer> total;
+
+  public DefaultRecordsService(@Autowired RecordRepository recordRepository) {
+      this.recordRepository = recordRepository;
+	  this.total = recordRepository.count()
+	                               .map(Long::intValue)
+	                               .cache();
   }
 
   @Override
   public Flux<Record> records(RecordsRequest request, ByteBuf metadata) {
-    return RxJava2Adapter.flowableToFlux(db
-        .select("SELECT * FROM records WHERE (data -> 'images' ->> 'thumbnail') is not null\n" +
-                "ORDER BY id OFFSET " + request.getOffset() + " LIMIT " + request.getMaxResults())
-        .fetchSize(Queues.XS_BUFFER_SIZE)
-        .get(result -> {
-          try {
-            Data.Builder data = Data.newBuilder();
-            JsonFormat.parser().merge(result.getString("data"), data);
+    return total.log()
+                .flatMapMany(c ->
+		                this.recordRepository.findAllByThumbnailNotNull(offset(request, c), request.getMaxResults())
+		                                     .map(DbRecord::toRecord));
+//    return this.recordRepository
+//            .findAllByThumbnailNotNull(request.getOffset(), request.getMaxResults())
+//            .map(DbRecord::toRecord);
+  }
 
-            return Record.newBuilder()
-                .setId(result.getInt("id"))
-                .setData(data)
-                .build();
-          } catch (Throwable t) {
-            throw Exceptions.propagate(t);
-          }
-        }))
-        .onBackpressureBuffer()
-        .doOnRequest(l -> {
-            System.out.println(l);
-        })
-        .repeat();
+  int offset(RecordsRequest req, int count) {
+    int max = count - req.getMaxResults();
+    return r.nextInt(((max - req.getOffset()) + 1) + req.getOffset());
   }
 }

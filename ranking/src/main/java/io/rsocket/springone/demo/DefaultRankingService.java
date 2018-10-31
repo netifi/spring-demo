@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultRankingService implements RankingService {
   private static final Logger logger = LogManager.getLogger(DefaultRankingService.class);
-  private final Comparator<Record> comparator =
-      Comparator.comparingInt(record -> record.getData().getRanking().getStoryCount());
+  private final Comparator<Record> comparator = Comparator.comparingInt(Record::getStoryCount);
 
   @Override
   public Flux<Record> rank(Publisher<RankingRequest> requestStream, ByteBuf metadata) {

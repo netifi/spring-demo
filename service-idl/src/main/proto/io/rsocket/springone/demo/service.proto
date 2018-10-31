@@ -34,47 +34,23 @@ message RankingRequest {
 
 message Record {
     int32 id = 1;
-    Data data = 2;
-}
-
-message Data {
-    repeated string aliases = 1;
-    repeated string authors = 2;
-    string description = 3;
-    Images images = 4;
-    Color mainColor = 5;
-    string name = 6;
-    repeated string partners = 7;
-    repeated string powers = 8;
-    Ranking ranking = 9;
-    repeated string secretIdentities = 10;
-    repeated string species = 11;
-    string superName = 12;
-    repeated string teams = 13;
-    Urls urls = 14;
-}
-
-message Images {
-    string background = 1;
-    string thumbnail = 2;
-}
-
-message Color {
-    int32 red = 1;
-    int32 green = 2;
-    int32 blue = 3;
-    string hexa = 4;
-}
-
-message Ranking {
-    int32 comicCount = 1;
-    int32 eventCount = 2;
-    int32 pageviewCount = 3;
-    int32 serieCount = 4;
-    int32 storyCount = 5;
-}
-
-message Urls {
-    string marvel = 1;
-    string wikipedia = 2;
+    repeated string aliases = 2;
+    repeated string authors = 3;
+    string name = 4;
+    string description = 5;
+    string background = 6;
+    string thumbnail = 7;
+    repeated string partners = 8;
+    repeated string powers = 9;
+    int32 comicCount = 10;
+    int32 eventCount = 11;
+    int32 pageviewCount = 12;
+    int32 serieCount = 13;
+    int32 storyCount = 14;
+    repeated string secretIdentities = 15;
+    repeated string species = 16;
+    string superName = 17;
+    repeated string teams = 18;
+    string marvelUrl = 19;
+    string wikipediaUrl = 20;
 }

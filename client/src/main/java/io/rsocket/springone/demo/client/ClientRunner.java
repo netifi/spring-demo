@@ -21,7 +21,7 @@ public class ClientRunner {
     private TournamentServiceClient tournamentService;
 
     public void run(String... args) throws Exception {
-        RecordsRequest request = RecordsRequest.newBuilder().setMaxResults(256).build();
+        RecordsRequest request = RecordsRequest.newBuilder().setMaxResults(40).build();
 
         tournamentService
             .tournament(request)
@@ -33,10 +33,19 @@ public class ClientRunner {
 
                 @Override
                 protected void hookOnNext(RoundResult record) {
-                    try {
-                        logger.info(JsonFormat.printer().print(record));
+                    if (record.getRound() == 1){
+                        logger.info(
+                                "\n=----------------------------------------------------------="+
+                                        "\n< @_@ > SUPER WINNER < @_@ >  ===> "+record.getWinner().getSuperName()+
+                                        "\n=----------------------------------------------------------=");
                     }
-                    catch (InvalidProtocolBufferException e) { }
+                    else {
+                        try {
+                            logger.info(JsonFormat.printer().print(record));
+                        }
+                        catch (InvalidProtocolBufferException e) { }
+                    }
+
 
                     request(1);
                 }

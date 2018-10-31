@@ -1,0 +1,10 @@
+= Intro
+
+Welcome to end-to-end Reactive World with RSocket, R2BDC, Project Reactor, Spring Framework, and Proteus Framework. In this guide, we are going to learn new horizon of Reactive communication in Microservice world using a new reactive protocol called http://rsocket.io/[RSocket]. Along with that, we are going to use here https://www.netifi.com/proteus[Proteus Framework] which simplify a lot usage of the RSocket
+protocol. Finally, we are going to use Spring Framework which allows building a full-fledged Web Application.
+
+In this guideline, we are building a system of ranking Marvel Superheroes. All information about Superheroes in the Marvel World is stored in the Postgres database.
+As we may remember, Postgres is a relational database and the most common communication with Postgres is through the blocking, non-reactive JDBC driver.
+Fortunately, there is a https://github.com/r2dbc/r2dbc-spi[R2DBC] java driver, which allows fully non-blocking and Reactive (with backpressure-control support) access to the database. One of the supported databases is Postgres.
+
+In the next section, we are going to do an initial setup required for the smooth running of our Reactive Superhero ranking system.
