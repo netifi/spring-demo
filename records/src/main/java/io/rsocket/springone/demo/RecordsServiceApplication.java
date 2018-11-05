@@ -21,12 +21,14 @@ public class RecordsServiceApplication {
   @Bean
   PostgresqlConnectionFactory connectionFactory() {
     return new PostgresqlConnectionFactory(
-            PostgresqlConnectionConfiguration.builder() //
-                                            .host("localhost")
-                                            .database("marvel")
-                                            .username("captain")
-                                            .password("america")
-                                            .build());
+        PostgresqlConnectionConfiguration
+                .builder() //
+                .host("localhost")
+                .database("marvel")
+                .username("captain")
+                .password("america")
+                .build()
+    );
   }
 
   @Bean

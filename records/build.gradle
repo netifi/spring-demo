@@ -10,16 +10,15 @@ dependencies {
 
     compile "com.google.protobuf:protobuf-java-util"
     compile 'io.projectreactor.addons:reactor-adapter'
-    compile 'com.github.davidmoten:rxjava2-jdbc:0.1-RC38'
     compile 'org.postgresql:postgresql'
     //data
-    compile "io.r2dbc:r2dbc-postgresql:1.0.0.M5"
-    compile "org.springframework.data:spring-data-commons:2.1.0.RELEASE"
-    compile "org.springframework.data:spring-data-jdbc:1.0.0.r2dbc-SNAPSHOT"
+    compile "io.r2dbc:r2dbc-postgresql"
+    compile "org.springframework.data:spring-data-commons"
+    compile "org.springframework.data:spring-data-r2dbc"
 
     //latest netty because conflict with netty 0.7.9
     compile "io.projectreactor.netty:reactor-netty:0.8.1.BUILD-SNAPSHOT"
-    compile "io.projectreactor:reactor-core:3.2.0.RELEASE"
+    compile "io.projectreactor:reactor-core"
 
     //export micrometer/prometheus
     compile "org.springframework.boot:spring-boot-starter-webflux"

@@ -1,6 +1,6 @@
 buildscript {
   ext {
-	springBootVersion = '2.1.0.RC1'
+	springBootVersion = '2.1.0.RELEASE'
   }
   repositories {
 	jcenter()
@@ -36,6 +36,10 @@ subprojects {
 
   dependencyManagement {
 	dependencies {
+
+	  dependency group: 'io.r2dbc', name: 'r2dbc-postgresql', version: '1.0.0.BUILD-SNAPSHOT'
+	  dependency group: 'org.springframework.data', name: 'spring-data-r2dbc', version: '1.0.0.BUILD-SNAPSHOT'
+
 	  dependencySet(group: 'com.google.protobuf', version: ext['protobuf.version']) {
 		entry 'protoc'
 		entry 'protobuf-java'

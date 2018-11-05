@@ -11,7 +11,7 @@ const Marvel = {
   init() {
 
     $('#hits .ais-hits').empty();
-    this.addMessage('ais-hits', "Waiting for Ranking Request...");
+    this.addMessage("Waiting for Ranking Request...", 'ais-hits');
     const url = "ws://localhost:8101/";
     const proteus = Proteus.create({
       setup: {
@@ -42,7 +42,8 @@ const Marvel = {
   },
 
   addMessage(message, element) {
-    var ul = document.getElementById(element);
+    var ul = document.getElementsByClassName(element)[0];
+    console.log('id', element);
     var li = document.createElement("li");
     li.appendChild(document.createTextNode(message));
     if(ul.childElementCount >= 10){
@@ -88,8 +89,7 @@ const Marvel = {
     return `${baseUrl}${stringOptions.join(',')}/${url}`;
   },
 
-  transformItem(wrapper) {
-    const data = wrapper.data;
+  transformItem(data) {
     // Main color
     let mainColorHexa = _.get(data, 'mainColor.hexa');
     let mainColorRgb = null;
@@ -197,7 +197,7 @@ const Marvel = {
     let isMatchingInNotDisplayedAttributes = !_.isEmpty(readableMatchingAttributes);
 
     let displayData = {
-      uuid: wrapper.id,
+      uuid: data.id,
       name: data.name,
       description: data.description,
       highlightedName: Marvel.getHighlightedValue(data, 'name'),
@@ -212,10 +212,10 @@ const Marvel = {
       // Used by the profile only
       backgroundProfile,
       urls: data.urls,
-      teams: data.teams,
-      powers: data.powers,
-      species: data.species,
-      authors: data.authors
+      teams: data.teamsList,
+      powers: data.powersList,
+      species: data.speciesList,
+      authors: data.authorsList
     };
 
     return {
@@ -283,9 +283,7 @@ const Marvel = {
           let $html = $($.parseHTML(html));
           $html.click(() => {
             responseProcessor.onNext(rankingRequest.getRecordsList()[i]);
-            MicroModal.show("modal-1", {
-              onClose: _ => subscription.request(1)
-            });
+            subscription.request(1);
           });
           hits.append($html);
         });
