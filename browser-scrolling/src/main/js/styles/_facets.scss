@@ -1,0 +1,102 @@
+$checkbox-height: 15px;
+$checkbox-width: 30px;
+$checkbox-mark-height: 13px;
+$checkbox-mark-width: $checkbox-mark-height;
+$checkbox-background-color: #BDC3C7;
+$checkbox-mark-color: #FFF;
+$checkbox-active-background-color: #F11E22;
+
+.ais-refinement-list {
+  margin-bottom: 1.3rem;
+  font-size: .9rem;
+}
+
+.ais-refinement-list--item {
+  padding-bottom: .3rem;
+}
+
+.ais-refinement-list--label {
+  cursor: pointer;
+  display: block;
+  font-weight: normal;
+  height: 1.3rem;
+  line-height: 1.3rem;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  padding-left: $checkbox-width + 5px;
+  position: relative;
+  &:hover {
+    color: $brand-primary;
+  }
+
+  // Fake checkbox made with before/after
+  &:before, &:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 50%;
+    bottom: 50%;
+    left: 0;
+    border-radius: 50px;
+  }
+  // Fake checkbox background
+  &:before {
+    width: $checkbox-width;
+    height: $checkbox-height;
+    margin-top: -$checkbox-height / 2;
+    background: $checkbox-background-color;
+  }
+  // Fake checkbox mark
+  &:after {
+    width: $checkbox-mark-width;
+    height: $checkbox-mark-height;
+    left: 2px;
+    margin-top: -$checkbox-mark-height / 2;
+    background: $checkbox-mark-color;
+  }
+
+  // When checked
+  .ais-refinement-list--item__active & {
+    font-weight: bold;
+    &:before {
+      background: $checkbox-active-background-color;
+    }
+    &:after {
+      transform: translateX($checkbox-width - $checkbox-mark-width - 4px);
+    }
+  }
+}
+
+// Hide checkbox
+.ais-refinement-list--checkbox {
+  display: none;
+}
+
+// Count
+.ais-refinement-list--count {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  background: #FFF;
+  box-shadow: -6px 0px 10px 2px #FFF;
+  color: #888;
+}
+
+// Show more
+.ais-show-more {
+  text-align:right;
+  display: block;
+  color: #000;
+  cursor: pointer;
+  &:before {
+    content: "+ "
+  }
+}
+.ais-show-more__active {
+  &:before {
+    content: "- "
+  }
+}
+ 

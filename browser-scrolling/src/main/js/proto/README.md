@@ -1,0 +1,1 @@
+Generate from `npm run-script protoc`

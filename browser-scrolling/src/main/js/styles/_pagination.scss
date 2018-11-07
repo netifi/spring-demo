@@ -1,0 +1,28 @@
+.pagination {
+  background: $red;
+  font-size: 1.2rem;
+  line-height: 1.2rem;
+  padding: .2rem;
+  text-align: center;
+}
+
+.ais-pagination {
+  display: inline-block;
+}
+
+.ais-pagination--link {
+  color: #FFF;
+  // background: blue;
+  padding: 5px;
+  min-width: 2rem;
+  display: inline-block;
+  border: 1px solid rgba(#FFF, .5);
+  &:hover {
+    color: $red;
+    background: #FFF;
+  }
+  .ais-pagination--item__active & {
+    color: $red;
+    background: #FFF;
+  }
+}

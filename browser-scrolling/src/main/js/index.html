@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Marvel Super-Search</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+  <meta property="og:url" content="https://pixelastic.github.io/marvel/">
+  <meta name="description" content="Search for any superhero or supervillain in the Marvel universe">
+  <meta name="twitter:description" content="Search for any superhero or supervillain in the Marvel universe">
+  <meta property="og:description" content="Search for any superhero or supervillain in the Marvel universe">
+  <meta name="twitter:site" content="Marvel Super-Search">
+  <meta property="og:title" content="Marvel Super-Search">
+  <meta property="og:site_name" content="Marvel Super-Search">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://pixelastic.github.io/marvel/img/opengraph.png">
+  <meta property="og:image" content="https://pixelastic.github.io/marvel/img/opengraph.png">
+  <link rel="shortcut icon" href="favicon.ico">
+  <!--[if lte IE 9]>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
+  <![endif]-->
+  </head>
+
+  <body>
+
+    <header class="l-header">
+      <a href="" class="header--home">
+        <img src="./img/logo-marvel.svg" class="header--logo" alt="Home logo" />
+      </a>
+      <div class="header--infos">
+        <div id="current-refined-values" class="header--current-refined-values"></div>
+        <div id="stats" class="header--stats"></div>
+      </div>
+    </header>
+
+    <div class="l-container js-container">
+
+      <div class="l-results">
+        <div class="hits" id="hits">
+          <div data-reactroot="" class="ais-hits"><div class="ais-hits--item"></div>
+          </div>
+        </div>
+        <div class="pagination" id="pagination"></div>
+      </div>
+    </div>
+
+    <div class="modal micromodal-slide" id="modal-1" aria-hidden="true">
+      <div class="modal__overlay" tabindex="-1" data-micromodal-close>
+        <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="modal-1-title">
+          <header class="modal__header">
+            <h2 class="modal__title" id="modal-1-title">
+              Ranking Modal
+            </h2>
+          </header>
+          <main class="modal__content" id="modal-1-content">
+            <p>
+              Would you like to start ranking superheroes using Reactive RSocket?
+            </p>
+          </main>
+          <footer class="modal__footer">
+            <button class="modal__btn modal__btn-primary" data-micromodal-close aria-label="Close this dialog window">Start Ranking</button>
+          </footer>
+        </div>
+      </div>
+    </div>
+
+    <script id="hitTemplate" language="x-template">
+      <div class="ais-hits--item">
+        <% if(thumbnail) { %>
+        <style>
+        .hit__<%= uuid %>.hit__inViewport .hit--thumbnail:before {
+          background-image: url(<%= thumbnail %>);
+        }
+        </style>
+        <% } %>
+
+        <% if(background) { %>
+        <style>
+        .hit__<%= uuid %>.hit__inViewport .hit--content {
+          background-image: url(<%= background %>);
+        }
+        </style>
+        <% } %>
+
+        <article class="hit hit__<%= uuid %> hit__inViewport">
+          <div class="hit--thumbnail"></div>
+
+          <div class="hit--content">
+            <h3 class="hit--title"><%- highlightedName %></h3>
+            <div class="hit--description">
+              <% if(highlightedDescription) { %>
+              <p><%- highlightedDescription %></p>
+              <% } %>
+
+              <% if(isMatchingInNotDisplayedAttributes) { %>
+              <ul class="hit--matching">
+                <% if(matchingAttributes) { %>
+                <% _.forEach(matchingAttributes, function(value, label) { %>
+                <li><%- label %>: <%- value %></li>
+                <% }) %>
+                <% } %>
+              </ul>
+              <% } %>
+            </div>
+          </div>
+
+          <textarea style="display:none;" class="js-hit--json-holder"><%= json %></textarea>
+        </article>
+      </div>
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/g/lodash@4.11.1,jquery@2.2.1"></script>
+  </body>
+</html>

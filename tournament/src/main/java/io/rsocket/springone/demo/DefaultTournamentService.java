@@ -8,10 +8,10 @@ import io.netifi.proteus.spring.core.annotation.Group;
 import io.netty.buffer.ByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 
 import org.springframework.stereotype.Service;
-import java.time.Duration;
 
 @Service
 public class DefaultTournamentService implements TournamentService {
@@ -32,17 +32,22 @@ public class DefaultTournamentService implements TournamentService {
   }
 
   private Flux<RoundResult> tournament(Flux<Record> records, int round, int maxRounds) {
-    Flux<Record> winners = round(records);
+    ConnectableFlux<Record> winners = round(records).publish(WINDOW_SIZE);
     Flux<RoundResult> result = winners
         .map(winner -> RoundResult.newBuilder()
             .setRound(round)
             .setWinner(winner)
             .build());
 
-    return (round < maxRounds)
+
+    Flux<RoundResult> tournamentResult = (round < maxRounds)
       ? Flux.just(result, Flux.defer(() -> tournament(winners, round + 1, maxRounds)))
             .flatMap(Function.identity(), 1, 1)
       : result;
+
+    winners.connect();
+
+    return tournamentResult;
   }
 
   private Flux<Record> round(Flux<Record> records) {

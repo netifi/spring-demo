@@ -4,7 +4,7 @@ const inViewport = require('in-viewport');
 const { Proteus } = require('proteus-js-client');
 const { Single } = require('rsocket-flowable');
 const { RecordsRequest } = require('./proto/service_pb');
-const { RankingServiceServer, TournamentServiceClient } = require('./proto/service_rsocket_pb');
+const { RecordsServiceClient } = require('./proto/service_rsocket_pb');
 const { QueuingFlowableProcessor } = require('rsocket-rpc-core');
 const MicroModal = require('micromodal').default;
 
@@ -16,7 +16,7 @@ const Marvel = {
     const url = "ws://localhost:8101/";
     const proteus = Proteus.create({
       setup: {
-          group: 'springone.demo.ranking',
+          group: 'springone.demo.scrolling',
           accessKey: 9007199254740991,
           accessToken: 'kTBDVtfRBO4tHOnZzSyY5ym2kfY=',
       },
@@ -26,8 +26,6 @@ const Marvel = {
     });
 
     MicroModal.init();
-
-    proteus.addService('io.rsocket.springone.demo.RankingService', new RankingServiceServer(this));
 
     proteus._connect().subscribe({
       onComplete: function onComplete(connection) {
@@ -41,25 +39,31 @@ const Marvel = {
       }
     });
 
-    MicroModal.show("modal-1", {
-        onClose: _ => {
-            let subscription;
-            let request = new RecordsRequest();
-            request.setMaxresults(40);
-            new TournamentServiceClient(proteus.group("springone.demo.tournament"))
-                .tournament(request)
-                .subscribe({
-                    onNext: roundResult => {
-                        console.log(roundResult.toObject());
-                        subscription.request(1);
-                    },
-                    onSubscribe: s => {
-                        subscription = s;
-                        subscription.request(1);
-                    }
-                });
-        }
-    });
+    let request = new RecordsRequest();
+    request.setMaxresults(40);
+
+    new RecordsServiceClient(proteus.group("springone.demo.records"))
+        .records(request)
+        .subscribe({
+            onNext: record => {
+                let element = record.toObject();
+                Marvel.lazyloadCounter = 0;
+                let hits = $('#hits .ais-hits');
+                let hitTemplate = $('#hitTemplate').html();
+                let emptyTemplate = $('#noResultsTemplate').html();
+                let compiledTemplate = _.template(hitTemplate.trim());
+                let html = compiledTemplate(Marvel.transformItem(element)).trim();
+                let $html = $($.parseHTML(html));
+                hits.append($html);
+                this.onRender();
+            },
+            onSubscribe: s => {
+                let hits = $('#hits .ais-hits');
+                hits.empty();
+                this.subscription = s;
+                s.request(12);
+            }
+        });
   },
 
   addMessage(message, element) {
