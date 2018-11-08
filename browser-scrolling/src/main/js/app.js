@@ -42,13 +42,20 @@ const Marvel = {
     let request = new RecordsRequest();
     request.setMaxresults(40);
 
+    let container = $('.l-results');
+    let hits = $('#hits .ais-hits');
+
+    container.scroll(() => {
+        if (container.scrollTop() < hits.height() - container.height()) return;
+        this.subscription.request(3);
+    });
+
     new RecordsServiceClient(proteus.group("springone.demo.records"))
         .records(request)
         .subscribe({
             onNext: record => {
                 let element = record.toObject();
                 Marvel.lazyloadCounter = 0;
-                let hits = $('#hits .ais-hits');
                 let hitTemplate = $('#hitTemplate').html();
                 let emptyTemplate = $('#noResultsTemplate').html();
                 let compiledTemplate = _.template(hitTemplate.trim());
@@ -58,7 +65,6 @@ const Marvel = {
                 this.onRender();
             },
             onSubscribe: s => {
-                let hits = $('#hits .ais-hits');
                 hits.empty();
                 this.subscription = s;
                 s.request(12);
