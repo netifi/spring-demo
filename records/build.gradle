@@ -16,10 +16,6 @@ dependencies {
     compile "org.springframework.data:spring-data-commons"
     compile "org.springframework.data:spring-data-r2dbc"
 
-    //latest netty because conflict with netty 0.7.9
-    compile "io.projectreactor.netty:reactor-netty:0.8.1.BUILD-SNAPSHOT"
-    compile "io.projectreactor:reactor-core"
-
     //export micrometer/prometheus
     compile "org.springframework.boot:spring-boot-starter-webflux"
     compile "org.springframework.boot:spring-boot-starter-actuator"
