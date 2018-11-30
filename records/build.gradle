@@ -6,20 +6,12 @@ mainClassName = 'io.rsocket.springone.demo.RecordsServiceApplication'
 dependencies {
     compile project(':service-idl')
 
-    compile "io.netifi.proteus:proteus-spring-boot-starter"
+    compile 'io.netifi.proteus:proteus-spring-boot-starter'
 
-    compile "com.google.protobuf:protobuf-java-util"
+    compile 'com.google.protobuf:protobuf-java-util'
     compile 'io.projectreactor.addons:reactor-adapter'
     compile 'org.postgresql:postgresql'
-    //data
-    compile "io.r2dbc:r2dbc-postgresql"
-    compile "org.springframework.data:spring-data-commons"
-    compile "org.springframework.data:spring-data-r2dbc"
-
-    //export micrometer/prometheus
-    compile "org.springframework.boot:spring-boot-starter-webflux"
-    compile "org.springframework.boot:spring-boot-starter-actuator"
-    compile "io.micrometer:micrometer-registry-prometheus"
+    compile 'io.r2dbc:r2dbc-postgresql'
 }
 
 configurations.all {

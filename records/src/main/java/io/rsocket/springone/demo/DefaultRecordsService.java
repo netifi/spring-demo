@@ -1,57 +1,88 @@
 package io.rsocket.springone.demo;
 
-import java.util.Random;
-import java.util.concurrent.atomic.AtomicLong;
-
 import io.netty.buffer.ByteBuf;
+import io.r2dbc.postgresql.PostgresqlConnectionFactory;
+import io.r2dbc.spi.Row;
+import io.r2dbc.spi.RowMetadata;
+import io.rsocket.springone.demo.Record.Builder;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
-import reactor.function.TupleUtils;
-import reactor.util.function.Tuple2;
-import reactor.util.function.Tuples;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import static reactor.function.TupleUtils.function;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Component
 public class DefaultRecordsService implements RecordsService {
-  @Autowired
-  private final RecordRepository recordRepository;
+  private final PostgresqlConnectionFactory connectionFactory;
 
-  private final Random r = new Random();
-
-  private final Mono<Integer> total;
-
-  public DefaultRecordsService(@Autowired RecordRepository recordRepository) {
-      this.recordRepository = recordRepository;
-	  this.total = recordRepository.count()
-	                               .map(Long::intValue)
-	                               .cache();
+  public DefaultRecordsService(@Autowired PostgresqlConnectionFactory connectionFactory) {
+      this.connectionFactory = connectionFactory;
   }
 
   @Override
   public Flux<Record> records(RecordsRequest request, ByteBuf metadata) {
-    return total
-                .flatMapMany(c -> Flux
-                    .<Tuple2<Long, Long>>create(s -> {
-                        AtomicLong index = new AtomicLong();
-                        s.onRequest(l -> s.next(Tuples.of(index.getAndAdd(l), l)));
-                    })
-                    .takeWhile(t2 -> t2.getT1() + t2.getT2() < c)
-                    .concatMap(function(recordRepository::findAllByThumbnailNotNull), 1)
-                )
-                .map(DbRecord::toRecord)
-                .log();
-
-//    return this.recordRepository
-//            .findAllByThumbnailNotNull(request.getOffset(), request.getMaxResults())
-//            .map(DbRecord::toRecord);
+    return connectionFactory.create()
+        .flatMapMany(connection ->
+          connection
+              .createStatement("SELECT * FROM records WHERE thumbnail is not null ORDER BY id OFFSET $1 LIMIT $2")
+              .bind(0, request.getOffset())
+              .bind(1, request.getMaxResults())
+              .execute()
+              .flatMap(result -> result.map(this::toRecord)))
+        .onBackpressureBuffer();
   }
 
-  int offset(RecordsRequest req, int count) {
-    int max = count - req.getMaxResults();
-    return r.nextInt(((max - req.getOffset()) + 1) + req.getOffset());
+  private Record toRecord(Row row, RowMetadata rowMetadata) {
+    Builder builder = Record.newBuilder();
+    Optional.ofNullable(row.get("id", Integer.class))
+        .ifPresent(builder::setId);
+    Optional.ofNullable(row.get("aliases", String[].class))
+        .map(Arrays::asList)
+        .ifPresent(builder::addAllAliases);
+    Optional.ofNullable(row.get("authors", String[].class))
+        .map(Arrays::asList)
+        .ifPresent(builder::addAllAuthors);
+    Optional.ofNullable(row.get("description", String.class))
+        .ifPresent(builder::setDescription);
+    Optional.ofNullable(row.get("background", String.class))
+        .ifPresent(builder::setBackground);
+    Optional.ofNullable(row.get("thumbnail", String.class))
+        .ifPresent(builder::setThumbnail);
+    Optional.ofNullable(row.get("name", String.class))
+        .ifPresent(builder::setName);
+    Optional.ofNullable(row.get("partners", String[].class))
+        .map(Arrays::asList)
+        .ifPresent(builder::addAllPartners);
+    Optional.ofNullable(row.get("powers", String[].class))
+        .map(Arrays::asList)
+        .ifPresent(builder::addAllPowers);
+    Optional.ofNullable(row.get("comic_count", Integer.class))
+        .ifPresent(builder::setComicCount);
+    Optional.ofNullable(row.get("event_count", Integer.class))
+        .ifPresent(builder::setEventCount);
+    Optional.ofNullable(row.get("pageview_count", Integer.class))
+        .ifPresent(builder::setPageviewCount);
+    Optional.ofNullable(row.get("serie_count", Integer.class))
+        .ifPresent(builder::setSerieCount);
+    Optional.ofNullable(row.get("story_count", Integer.class))
+        .ifPresent(builder::setStoryCount);
+    Optional.ofNullable(row.get("secret_identities", String[].class))
+        .map(Arrays::asList)
+        .ifPresent(builder::addAllSecretIdentities);
+    Optional.ofNullable(row.get("species", String[].class))
+        .map(Arrays::asList)
+        .ifPresent(builder::addAllSpecies);
+    Optional.ofNullable(row.get("supername", String.class))
+        .ifPresent(builder::setSuperName);
+    Optional.ofNullable(row.get("teams", String[].class))
+        .map(Arrays::asList)
+        .ifPresent(builder::addAllTeams);
+    Optional.ofNullable(row.get("marvel_url", String.class))
+        .ifPresent(builder::setMarvelUrl);
+    Optional.ofNullable(row.get("wikipedia_url", String.class))
+        .ifPresent(builder::setWikipediaUrl);
+    return builder.build();
   }
 }

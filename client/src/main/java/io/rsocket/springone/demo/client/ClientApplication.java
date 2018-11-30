@@ -13,7 +13,8 @@ public class ClientApplication {
   }
 
   @Bean
-  public CommandLineRunner commandLineRunner(ClientRunner clientRunner) {
-    return clientRunner::run;
+  public CommandLineRunner commandLineRunner(TournamentRunner tournamentRunner, RecordsRunner recordsRunner) {
+    //return tournamentRunner::run;
+    return recordsRunner::run;
   }
 }
