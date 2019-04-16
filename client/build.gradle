@@ -6,6 +6,7 @@ mainClassName = 'io.rsocket.springone.demo.client.ClientApplication'
 dependencies {
     compile project(':service-idl')
 
+    compile "org.hdrhistogram:HdrHistogram"
     compile "io.netifi.proteus:proteus-spring-boot-starter"
 
     compile "com.google.protobuf:protobuf-java-util"

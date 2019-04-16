@@ -1,9 +1,15 @@
 plugins {
-    id 'com.google.protobuf' version '0.8.6'
+    id 'com.google.protobuf'
 }
 
 dependencies {
-    compile "io.rsocket.rpc:rsocket-rpc-core"
+    implementation "io.rsocket.rpc:rsocket-rpc-core"
+
+    implementation 'com.google.protobuf:protobuf-java'
+    implementation 'com.google.protobuf:protobuf-java-util'
+    implementation 'io.rsocket.rpc:rsocket-rpc-core'
+
+    protobuf 'io.rsocket.rpc:rsocket-rpc-protobuf-idl'
 }
 
 sourceSets {

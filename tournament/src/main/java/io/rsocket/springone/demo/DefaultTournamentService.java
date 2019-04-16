@@ -1,7 +1,6 @@
 package io.rsocket.springone.demo;
 
 import java.math.RoundingMode;
-import java.util.function.Function;
 
 import com.google.common.math.IntMath;
 import io.netifi.proteus.spring.core.annotation.Group;
@@ -10,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Schedulers;
 
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 public class DefaultTournamentService implements TournamentService {
   private static final Logger logger = LogManager.getLogger(DefaultTournamentService.class);
   private static final int WINDOW_SIZE = 2;
-  private static final int CONCURRENCY = 4;
 
   @Group("springone.demo.records")
   private RecordsServiceClient recordsService;
@@ -32,7 +31,7 @@ public class DefaultTournamentService implements TournamentService {
   }
 
   private Flux<RoundResult> tournament(Flux<Record> records, int round, int maxRounds) {
-    ConnectableFlux<Record> winners = round(records).publish(WINDOW_SIZE);
+    ConnectableFlux<Record> winners = round(records).publish();
     Flux<RoundResult> result = winners
         .map(winner -> RoundResult.newBuilder()
             .setRound(round)
@@ -42,7 +41,7 @@ public class DefaultTournamentService implements TournamentService {
 
     Flux<RoundResult> tournamentResult = (round < maxRounds)
       ? Flux.just(result, Flux.defer(() -> tournament(winners, round + 1, maxRounds)))
-            .flatMap(Function.identity(), 1, 1)
+            .flatMap(flux -> flux.subscribeOn(Schedulers.parallel()))
       : result;
 
     winners.connect();
@@ -51,9 +50,9 @@ public class DefaultTournamentService implements TournamentService {
   }
 
   private Flux<Record> round(Flux<Record> records) {
-    return records.buffer(WINDOW_SIZE)
+    return records
+        .buffer(WINDOW_SIZE)
         .map(buffer -> RankingRequest.newBuilder().addAllRecords(buffer).build())
-        .log()
         .transform(rankingService::rank);
   }
 }

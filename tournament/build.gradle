@@ -4,7 +4,7 @@ apply plugin: 'application'
 mainClassName = 'io.rsocket.springone.demo.TournamentServiceApplication'
 
 dependencies {
-    compile project(':service-idl')
-
-    compile "io.netifi.proteus:proteus-spring-boot-starter"
+    implementation project(':service-idl')
+    implementation 'com.google.guava:guava:27.1-jre'
+    implementation "io.netifi.proteus:proteus-spring-boot-starter"
 }

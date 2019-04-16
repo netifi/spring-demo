@@ -20,7 +20,6 @@ public class DefaultRankingService implements RankingService {
   @Override
   public Flux<Record> rank(Publisher<RankingRequest> requestStream, ByteBuf metadata) {
     return Flux.from(requestStream)
-               .map(request -> Collections.max(request.getRecordsList(), comparator))
-               .log();
+               .map(request -> Collections.max(request.getRecordsList(), comparator));
   }
 }

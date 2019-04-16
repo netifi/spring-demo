@@ -7,17 +7,10 @@ dependencies {
     compile project(':service-idl')
 
     compile 'io.netifi.proteus:proteus-spring-boot-starter'
-
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv'
     compile 'com.google.protobuf:protobuf-java-util'
     compile 'io.projectreactor.addons:reactor-adapter'
     compile 'org.postgresql:postgresql'
     compile 'io.r2dbc:r2dbc-postgresql'
-}
-
-configurations.all {
-    resolutionStrategy {
-        dependencySubstitution {
-            substitute module('com.google.guava:guava') with module('com.google.guava:guava:22.0')
-        }
-    }
+    compile 'io.r2dbc:r2dbc-client'
 }
