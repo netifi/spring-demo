@@ -43,6 +43,7 @@ public class TournamentRunner {
             .subscribe(__ ->
         tournamentService
             .tournament(request)
+            .retryBackoff(Long.MAX_VALUE, Duration.ofSeconds(1), Duration.ofSeconds(2))
             .repeat()
             .subscribe(new BaseSubscriber<RoundResult>() {
 

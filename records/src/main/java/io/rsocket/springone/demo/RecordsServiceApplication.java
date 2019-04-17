@@ -11,10 +11,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.io.Resource;
 
 @SpringBootApplication
 public class RecordsServiceApplication {
@@ -22,9 +23,12 @@ public class RecordsServiceApplication {
     SpringApplication.run(RecordsServiceApplication.class, args);
   }
 
+  @Value("classpath:/records.csv")
+  Resource recordsFile;
+
   @Bean
   @Qualifier("dataset")
-  public List<Map> dataSet(ApplicationContext applicationContext) throws IOException {
+  public List<Map> dataSet() throws IOException {
 // Manually-built schema: one with type, others default to "STRING"
     CsvSchema schema = CsvSchema
         .builder()
@@ -57,8 +61,7 @@ public class RecordsServiceApplication {
     ObjectMapper mapper = new CsvMapper();
     MappingIterator<Map> mappingIterator = mapper.readerFor(HashMap.class)
                                     .with(schema)
-                                    .readValues(applicationContext.getResource("records.csv")
-                                       .getFile());
+                                    .readValues(recordsFile.getInputStream());
 
     List<Map> maps = mappingIterator.readAll();
 
